@@ -1,0 +1,116 @@
+{% comment %}
+Composant Pagination avec DaisyUI inspiré de Flux UI
+Usage: <c-pagination current_page="2" total_pages="10" base_url="/items" />
+       <c-pagination current_page="1" total_pages="5" base_url="/items" simple />
+       <c-pagination current_page="3" total_pages="20" base_url="/items" size="lg" />
+{% endcomment %}
+
+<c-vars current_page="1" total_pages="1" base_url="#" size="md" />
+
+<div class="join pagination-{{ size }} {{ class }}" {{ attrs }}>
+    {% if simple %}
+        {% comment %}Simple pagination: Previous/Next only{% endcomment %}
+        {% if current_page > 1 %}
+            <a href="{{ base_url }}?page={{ current_page|add:'-1' }}" class="join-item btn btn-{{ size }}">
+                <c-icon name="chevron-left" />
+                Précédent
+            </a>
+        {% else %}
+            <span class="join-item btn btn-{{ size }} btn-disabled">
+                <c-icon name="chevron-left" />
+                Précédent
+            </span>
+        {% endif %}
+
+        {% if current_page < total_pages %}
+            <a href="{{ base_url }}?page={{ current_page|add:'1' }}" class="join-item btn btn-{{ size }}">
+                Suivant
+                <c-icon name="chevron-right" />
+            </a>
+        {% else %}
+            <span class="join-item btn btn-{{ size }} btn-disabled">
+                Suivant
+                <c-icon name="chevron-right" />
+            </span>
+        {% endif %}
+    {% else %}
+        {% comment %}Full pagination with page numbers{% endcomment %}
+        
+        {% comment %}Previous button{% endcomment %}
+        {% if current_page > 1 %}
+            <a href="{{ base_url }}?page={{ current_page|add:'-1' }}" class="join-item btn btn-{{ size }}">
+                <c-icon name="chevron-left" />
+            </a>
+        {% else %}
+            <span class="join-item btn btn-{{ size }} btn-disabled">
+                <c-icon name="chevron-left" />
+            </span>
+        {% endif %}
+
+        {% comment %}Page numbers logic{% endcomment %}
+        {% if total_pages <= 7 %}
+            {% comment %}Show all pages if 7 or fewer{% endcomment %}
+            {% for page_num in "1234567"|make_list %}
+                {% if page_num|add:"0" <= total_pages %}
+                    {% if page_num|add:"0" == current_page %}
+                        <span class="join-item btn btn-{{ size }} btn-active">{{ page_num }}</span>
+                    {% else %}
+                        <a href="{{ base_url }}?page={{ page_num }}" class="join-item btn btn-{{ size }}">{{ page_num }}</a>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            {% comment %}Complex pagination for many pages{% endcomment %}
+            
+            {% comment %}Always show page 1{% endcomment %}
+            {% if current_page == 1 %}
+                <span class="join-item btn btn-{{ size }} btn-active">1</span>
+            {% else %}
+                <a href="{{ base_url }}?page=1" class="join-item btn btn-{{ size }}">1</a>
+            {% endif %}
+
+            {% comment %}Show ellipsis if current page is far from start{% endcomment %}
+            {% if current_page > 4 %}
+                <span class="join-item btn btn-{{ size }} btn-disabled">...</span>
+            {% endif %}
+
+            {% comment %}Show pages around current page{% endcomment %}
+            {% for i in "-2,-1,0,1,2"|make_list %}
+                {% with page_num=current_page|add:i %}
+                    {% if page_num > 1 and page_num < total_pages %}
+                        {% if page_num == current_page %}
+                            <span class="join-item btn btn-{{ size }} btn-active">{{ page_num }}</span>
+                        {% else %}
+                            <a href="{{ base_url }}?page={{ page_num }}" class="join-item btn btn-{{ size }}">{{ page_num }}</a>
+                        {% endif %}
+                    {% endif %}
+                {% endwith %}
+            {% endfor %}
+
+            {% comment %}Show ellipsis if current page is far from end{% endcomment %}
+            {% with pages_from_end=total_pages|add:current_page|add:"-1"|add:"-1"|add:"-1" %}
+                {% if pages_from_end > 3 %}
+                    <span class="join-item btn btn-{{ size }} btn-disabled">...</span>
+                {% endif %}
+            {% endwith %}
+
+            {% comment %}Always show last page{% endcomment %}
+            {% if current_page == total_pages %}
+                <span class="join-item btn btn-{{ size }} btn-active">{{ total_pages }}</span>
+            {% else %}
+                <a href="{{ base_url }}?page={{ total_pages }}" class="join-item btn btn-{{ size }}">{{ total_pages }}</a>
+            {% endif %}
+        {% endif %}
+
+        {% comment %}Next button{% endcomment %}
+        {% if current_page < total_pages %}
+            <a href="{{ base_url }}?page={{ current_page|add:'1' }}" class="join-item btn btn-{{ size }}">
+                <c-icon name="chevron-right" />
+            </a>
+        {% else %}
+            <span class="join-item btn btn-{{ size }} btn-disabled">
+                <c-icon name="chevron-right" />
+            </span>
+        {% endif %}
+    {% endif %}
+</div>

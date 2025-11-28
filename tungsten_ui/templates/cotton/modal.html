@@ -1,0 +1,16 @@
+{% comment %}
+Usage:
+<c-modal>
+    <h3 class="text-lg font-bold">Hello!</h3>
+    <p class="py-4">Press ESC key or click the button below to close</p>
+</c-modal>
+{% endcomment %}
+
+<dialog id="{{ id }}" class="modal">
+  <div class="modal-box">
+    {{ slot }}
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>Fermer</button>
+  </form>
+</dialog>

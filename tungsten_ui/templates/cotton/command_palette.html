@@ -1,0 +1,448 @@
+{% comment %}
+Command Palette component with DaisyUI + Alpine.js
+Usage: <c-command_palette :groups="groups_data" fetch_url="/api/search/"></c-command_palette>
+{% endcomment %}
+
+<c-vars
+    modal_id="command_palette"
+    placeholder="Type to search..."
+    fetch_url=""
+    debounce="300"
+    global_shortcut="true"
+    shortcut_keys="cmd.k,ctrl.k"
+    open_event=""
+    groups='[]'
+/>
+
+<div x-data="{
+             // État
+             groups: [],
+             filteredGroups: [],
+             searchTerm: '',
+             selectedIndex: 0,
+             loading: false,
+             debounceTimer: null,
+             modalId: '{{ modal_id }}',
+
+             // Configuration
+             fetchUrl: '{{ fetch_url }}',
+             debounce: {{ debounce }},
+             globalShortcut: {% if global_shortcut == 'false' %}false{% else %}true{% endif %},
+             shortcutKeys: '{{ shortcut_keys }}'.split(','),
+             openEvent: '{{ open_event }}',
+
+             // Initialisation
+             init() {
+             // Initialiser les groupes
+             this.initGroups();
+
+             // Surveiller les changements de groups
+             this.$watch('groups', () => {
+             this.filteredGroups = this.groups;
+             this.selectedIndex = 0;
+             });
+
+             // Setup des raccourcis clavier si activés
+             if (this.globalShortcut && this.shortcutKeys.length > 0) {
+             this.setupKeyboardShortcuts();
+             }
+
+             // Écouter l'événement personnalisé si spécifié
+             if (this.openEvent) {
+             window.addEventListener(this.openEvent, () => {
+             this.open();
+             });
+             }
+
+             // Écouter l'événement générique avec modalId
+             window.addEventListener('open-command-palette', (event) => {
+             if (event.detail && event.detail.modalId === this.modalId) {
+             this.open();
+             }
+             });
+
+             // Créer une fonction globale pour ouvrir cette palette spécifiquement
+             const functionName = `open${this.modalId.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}`;
+             window[functionName] = (groups) => {
+             if (groups && Array.isArray(groups)) {
+             this.groups = groups;
+             this.filteredGroups = groups;
+             }
+             this.open();
+             };
+             },
+
+             // Initialiser les groupes depuis différentes sources
+             initGroups() {
+             try {
+             // D'abord vérifier s'il y a des groupes définis dans le parent Alpine (via :groups binding)
+             const parentGroups = this.$el.getAttribute('x-bind:groups') || this.$el.getAttribute(':groups');
+             if (parentGroups) {
+             // Les groupes viendront du parent Alpine, ne rien faire ici
+             return;
+             }
+
+             // Si groups n'est pas encore défini (pas passé via :groups)
+             if (!this.groups || this.groups.length === 0) {
+             // Essayer de parser depuis l'attribut Django
+             const groupsFromAttr = {{ groups|safe }};
+             if (groupsFromAttr && groupsFromAttr.length > 0) {
+             this.groups = groupsFromAttr;
+             } else {
+             // Sinon, essayer d'utiliser les groupes globaux si c'est la palette globale
+             const modalId = '{{ modal_id }}';
+             if (modalId === 'global_command_palette' && window.globalCommandPaletteGroups) {
+             this.groups = window.globalCommandPaletteGroups;
+             } else {
+             this.groups = [];
+             }
+             }
+             }
+             } catch (e) {
+             // Si erreur et pas de groups, initialiser vide
+             if (!this.groups || this.groups.length === 0) {
+             console.error('Erreur lors du parsing des groupes:', e);
+             this.groups = [];
+             }
+             }
+             this.filteredGroups = this.groups;
+             },
+
+             // Setup des raccourcis clavier dynamiques
+             setupKeyboardShortcuts() {
+             document.addEventListener('keydown', (e) => {
+             if (this.$refs.modal && this.$refs.modal.open) return; // Ne pas réagir si déjà ouvert
+
+             for (let shortcut of this.shortcutKeys) {
+             const keys = shortcut.trim().split('.');
+             let match = true;
+
+             // Vérifier les modificateurs
+             const hasCmd = keys.includes('cmd') || keys.includes('meta');
+             const hasCtrl = keys.includes('ctrl');
+             const hasAlt = keys.includes('alt');
+             const hasShift = keys.includes('shift');
+
+             if (hasCmd && !e.metaKey) match = false;
+             if (hasCtrl && !e.ctrlKey) match = false;
+             if (hasAlt && !e.altKey) match = false;
+             if (hasShift && !e.shiftKey) match = false;
+
+             // Trouver la touche principale (dernière dans la chaîne)
+             const mainKey = keys[keys.length - 1];
+             if (!['cmd', 'ctrl', 'alt', 'shift', 'meta'].includes(mainKey)) {
+             if (e.key.toLowerCase() !== mainKey.toLowerCase()) match = false;
+             }
+
+             if (match) {
+             e.preventDefault();
+             this.toggle();
+             break;
+             }
+             }
+             });
+             },
+
+             // Navigation
+             toggle() {
+             const modal = this.$refs.modal;
+             if (modal && modal.open) {
+             this.close();
+             } else {
+             this.open();
+             }
+             },
+
+             open() {
+             // Réinitialiser les groupes au cas où ils auraient été passés via Alpine.js
+             this.initGroups();
+
+             if (this.$refs.modal) {
+             this.$refs.modal.showModal();
+             // Utiliser un délai pour s'assurer que le modal est bien ouvert
+             setTimeout(() => {
+             if (this.$refs.searchInput) {
+             this.$refs.searchInput.focus();
+             this.$refs.searchInput.select();
+             }
+             }, 50);
+             }
+             },
+
+             close() {
+             if (this.$refs.modal) {
+             this.$refs.modal.close();
+             }
+             this.searchTerm = '';
+             this.selectedIndex = 0;
+             this.filteredGroups = this.groups;
+             },
+
+             // Recherche
+             search() {
+             clearTimeout(this.debounceTimer);
+             this.debounceTimer = setTimeout(() => {
+             this.performSearch();
+             }, this.debounce);
+             },
+
+             async performSearch() {
+             if (!this.searchTerm.trim()) {
+             this.filteredGroups = this.groups;
+             this.selectedIndex = 0;
+             return;
+             }
+
+             // Fetch dynamique si URL fournie
+             if (this.fetchUrl) {
+             await this.fetchResults();
+             }
+
+             // Filtrage local
+             this.filteredGroups = this.filterGroups(this.groups, this.searchTerm);
+             this.selectedIndex = 0;
+             },
+
+             async fetchResults() {
+             try {
+             this.loading = true;
+             const response = await fetch(`${this.fetchUrl}?q=${encodeURIComponent(this.searchTerm)}`);
+             const data = await response.json();
+             if (data.groups) {
+             this.groups = data.groups;
+             }
+             } catch (error) {
+             console.error('Erreur lors du fetch:', error);
+             } finally {
+             this.loading = false;
+             }
+             },
+
+             // Algorithme de recherche floue simple
+             fuzzyMatch(text, pattern) {
+             const textLower = text.toLowerCase();
+             const patternLower = pattern.toLowerCase();
+
+             // Correspondance exacte = score le plus élevé
+             if (textLower.includes(patternLower)) {
+             return 100;
+             }
+
+             // Recherche floue basique
+             let score = 0;
+             let textIndex = 0;
+
+             for (let i = 0; i < patternLower.length; i++) {
+             const char = patternLower[i];
+             const foundIndex = textLower.indexOf(char, textIndex);
+
+             if (foundIndex === -1) {
+             return 0; // Caractère non trouvé
+             }
+
+             // Plus le caractère est proche, meilleur est le score
+             score += Math.max(0, 10 - (foundIndex - textIndex));
+             textIndex = foundIndex + 1;
+             }
+
+             return score;
+             },
+
+             filterGroups(groups, searchTerm) {
+             return groups.map(group => {
+             const filteredItems = group.items
+             .map(item => ({
+             ...item,
+             score: this.fuzzyMatch(item.label + ' ' + (item.suffix || ''), searchTerm)
+             }))
+             .filter(item => item.score > 0)
+             .sort((a, b) => b.score - a.score);
+
+             return {
+             ...group,
+             items: filteredItems
+             };
+             }).filter(group => group.items.length > 0);
+             },
+
+             // Navigation au clavier
+             selectNext() {
+             const totalItems = this.getTotalItems();
+             if (totalItems > 0) {
+             this.selectedIndex = (this.selectedIndex + 1) % totalItems;
+             }
+             },
+
+             selectPrevious() {
+             const totalItems = this.getTotalItems();
+             if (totalItems > 0) {
+             this.selectedIndex = this.selectedIndex <= 0 ? totalItems - 1 : this.selectedIndex - 1;
+             }
+             },
+
+             getTotalItems() {
+             return this.filteredGroups.reduce((total, group) => total + group.items.length, 0);
+             },
+
+             getGlobalIndex(groupIndex, itemIndex) {
+             let globalIndex = 0;
+             for (let i = 0; i < groupIndex; i++) {
+             globalIndex += this.filteredGroups[i].items.length;
+             }
+             return globalIndex + itemIndex;
+             },
+
+             // Exécution
+             executeSelected() {
+             const selectedItem = this.getSelectedItem();
+             if (selectedItem) {
+             this.selectItem(selectedItem);
+             }
+             },
+
+             getSelectedItem() {
+             let currentIndex = 0;
+             for (const group of this.filteredGroups) {
+             for (const item of group.items) {
+             if (currentIndex === this.selectedIndex) {
+             return item;
+             }
+             currentIndex++;
+             }
+             }
+             return null;
+             },
+
+             selectItem(item) {
+             // Émettre un événement personnalisé
+             this.$dispatch('command-palette-select', { item });
+
+             // Exécuter l'action onSelect si définie (JavaScript inline)
+             if (item.onSelect) {
+             try {
+             // Créer une fonction avec le code JavaScript et l'exécuter
+             const func = new Function('item', item.onSelect);
+             func(item);
+             } catch (error) {
+             console.error('Erreur lors de l\'exécution de onSelect:', error);
+             }
+             }
+             // Fallback sur l'ancienne méthode action si onSelect n'existe pas
+             else if (item.action && window[item.action]) {
+             window[item.action](item);
+             }
+
+             this.close();
+             }
+             }">
+
+    <!-- Modal -->
+    <dialog :id="'{{ modal_id }}'" class="modal" x-ref="modal" @click="if($event.target === $el) close()">
+        <div class="modal-box w-11/12 max-w-2xl p-0 bg-base-100">
+
+            <!-- Search Input -->
+            <div class="p-4 border-b border-base-300">
+                <div class="relative">
+                    <input
+                        type="text"
+                        placeholder="{{ placeholder }}"
+                        class="input input-ghost w-full pl-10 pr-4 text-lg focus:outline-none"
+                        x-model="searchTerm"
+                        x-ref="searchInput"
+                        @input="search()"
+                        @keydown.down.prevent="selectNext()"
+                        @keydown.up.prevent="selectPrevious()"
+                        @keydown.enter.prevent="executeSelected()"
+                        @keydown.escape.prevent="close()"
+                    />
+                    <div class="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none z-10">
+                        <c-icon name="search" class="w-5 h-5 text-base-content/50"></c-icon>
+                    </div>
+                    <div x-show="loading" class="absolute right-3 top-1/2 transform -translate-y-1/2">
+                        <span class="loading loading-spinner loading-sm"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="max-h-96 overflow-y-auto" x-show="!loading">
+
+                <!-- No Results -->
+                <div x-show="filteredGroups.length === 0 && searchTerm.length > 0" class="p-8 text-center">
+                    <div class="text-base-content/50 mb-2">
+                        <c-icon name="search" class="w-8 h-8 mx-auto mb-2"></c-icon>
+                    </div>
+                    <p class="text-base-content/70">No results found</p>
+                    <p class="text-sm text-base-content/50 mt-1">Try a different search term</p>
+                </div>
+
+                <!-- Groups and Items -->
+                <template x-for="(group, groupIndex) in filteredGroups" :key="group.id">
+                    <div>
+                        <!-- Group Label -->
+                        <div x-show="group.label" class="px-4 py-2 text-xs font-medium text-base-content/60 uppercase tracking-wide bg-base-200/50">
+                            <span x-text="group.label"></span>
+                        </div>
+
+                        <!-- Group Items -->
+                        <template x-for="(item, itemIndex) in group.items" :key="item.id">
+                            <div
+                                class="px-4 py-3 cursor-pointer transition-colors border-l-2 border-transparent"
+                                :class="{
+                                        'bg-primary/10 border-primary': selectedIndex === getGlobalIndex(groupIndex, itemIndex),
+                                        'hover:bg-base-200': selectedIndex !== getGlobalIndex(groupIndex, itemIndex)
+                                        }"
+                                @click="selectItem(item)"
+                                @mouseenter="selectedIndex = getGlobalIndex(groupIndex, itemIndex)"
+                            >
+                                <div class="flex items-center gap-3">
+                                    <!-- Icon or Avatar -->
+                                    <div class="flex-shrink-0">
+                                        <div x-show="item.avatar" class="avatar">
+                                            <div class="w-8 h-8 rounded-full">
+                                                <img :src="item.avatar" :alt="item.label" />
+                                            </div>
+                                        </div>
+                                        <div x-show="item.icon && !item.avatar">
+                                            <c-icon :name="item.icon" class="w-5 h-5 text-base-content/70"></c-icon>
+                                        </div>
+                                    </div>
+
+                                    <!-- Content -->
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center justify-between">
+                                            <p class="text-sm font-medium text-base-content truncate" x-text="item.label"></p>
+                                            <div x-show="item.kbd" class="flex gap-1">
+                                                <template x-for="key in (item.kbd || [])">
+                                                    <kbd class="kbd kbd-xs" x-text="key"></kbd>
+                                                </template>
+                                            </div>
+                                        </div>
+                                        <p x-show="item.suffix" class="text-xs text-base-content/60 truncate mt-1" x-text="item.suffix"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Footer -->
+            <div class="p-3 border-t border-base-300 bg-base-200/30">
+                <div class="flex items-center justify-between text-xs text-base-content/60">
+                    <div class="flex items-center gap-4">
+                        <span class="flex items-center gap-1">
+                            <kbd class="kbd kbd-xs">↵</kbd> to select
+                        </span>
+                        <span class="flex items-center gap-1">
+                            <kbd class="kbd kbd-xs">↑↓</kbd> to navigate
+                        </span>
+                    </div>
+                    <span class="flex items-center gap-1">
+                        <kbd class="kbd kbd-xs">ESC</kbd> to close
+                    </span>
+                </div>
+            </div>
+        </div>
+    </dialog>
+</div>

@@ -1,0 +1,28 @@
+{% comment %}
+Composant PricingPlans wrapper pour afficher plusieurs plans de tarification
+Usage: 
+<c-pricing_plans orientation="horizontal" compact="false">
+    <c-pricing_plan ...></c-pricing_plan>
+    <c-pricing_plan ...></c-pricing_plan>
+</c-pricing_plans>
+{% endcomment %}
+
+<c-vars
+    orientation="horizontal"
+    compact="false"
+/>
+
+{% comment %} Grid classes based on orientation and child count {% endcomment %}
+<div class="
+            {% if orientation == 'horizontal' %}
+                grid gap-6
+                grid-cols-1
+                md:grid-cols-2
+                lg:grid-cols-3
+            {% else %}
+                flex flex-col gap-6
+            {% endif %}
+            {{ class }}
+           " {{ attrs }}>
+    {{ slot }}
+</div>

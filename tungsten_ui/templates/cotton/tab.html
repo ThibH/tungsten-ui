@@ -1,0 +1,9 @@
+<c-vars name="" icon="" group_name="" checked="" />
+
+<input type="radio" name="tabs-{{ group_name }}" id="tab-{{ group_name }}-{{ name }}" class="sr-only" {% if checked %}checked{% endif %} />
+<label for="tab-{{ group_name }}-{{ name }}" class="tab">
+    {% if icon %}
+        <c-icon name="{{ icon }}" class="mr-2" />
+    {% endif %}
+    {{ slot }}
+</label>

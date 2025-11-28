@@ -1,0 +1,18 @@
+{% comment %}
+Usage:
+<c-icon name="user" />
+<c-icon name="home" />
+<c-icon name="settings" />
+
+Paramètres:
+- name: nom de l'icône Lucide (requis)
+- Toutes les icônes ont une taille de 24×24px par défaut
+{% endcomment %}
+
+<c-vars />
+
+<span data-lucide="{{ name }}"
+      class="{% if not class or 'size-' not in class %}size-6{% endif %}{% if class %} {{ class }}{% endif %}" 
+      {{ attrs }}>
+    <!-- SVG sera injecté ici par JavaScript -->
+</span>

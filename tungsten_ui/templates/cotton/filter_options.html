@@ -1,0 +1,42 @@
+{% comment %}
+Filter component with checkbox options (without dropdown wrapper)
+Usage in a dropdown:
+<c-dropdown label="Status">
+    <c-filter-options filter-id="status" />
+</c-dropdown>
+
+Usage in a modal:
+<c-modal id="filter-modal">
+    <h3>Filters</h3>
+    <c-filter-options filter-id="status" label="Status" />
+</c-modal>
+
+Standalone usage:
+<c-filter-options filter-id="status" label="Status" show-label="true" />
+
+Parameters:
+- filter_id: filter identifier (must match the data-filter-id of the column)
+- label: label text (optional)
+- show_label: display the label (optional, default: false)
+{% endcomment %}
+
+<c-vars show_label="false" />
+
+<div data-filter-dropdown="{{ filter_id }}" {{ attrs }}>
+    {% if show_label and label %}
+    <div class="text-sm font-medium text-base-content mb-2">{{ label }}</div>
+    {% endif %}
+    
+    <div class="text-sm text-base-content/50 p-2" data-no-options>No options available</div>
+    
+    <div data-options-container class="space-y-1">
+        <!-- Options will be populated by JavaScript -->
+    </div>
+    
+    <div class="hidden" data-clear-section>
+        <div class="divider my-1"></div>
+        <c-button variant="ghost" size="xs" class="w-full" data-clear-filter icon="x">
+            Clear
+        </c-button>
+    </div>
+</div>

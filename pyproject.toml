@@ -1,0 +1,92 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tungsten-ui"
+version = "0.1.1"
+description = "Tungsten UI - A Django component library with Cotton, HTMX, JavaScript, Tailwind CSS and DaisyUI"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Thibault HOUDON", email = "support@docstring.fr"},
+]
+keywords = ["django", "components", "ui", "htmx", "javascript", "tailwind", "daisyui"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Framework :: Django",
+    "Framework :: Django :: 3.2",
+    "Framework :: Django :: 4.0",
+    "Framework :: Django :: 4.1",
+    "Framework :: Django :: 4.2",
+    "Framework :: Django :: 5.0",
+]
+dependencies = [
+    "Django>=3.2",
+    "django-cotton>=0.9.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-django",
+    "black",
+    "isort",
+    "flake8",
+]
+
+[project.urls]
+Homepage = "https://github.com/ThibH/tungsten-ui"
+Repository = "https://github.com/ThibH/tungsten-ui"
+Documentation = "https://github.com/ThibH/tungsten-ui"
+Issues = "https://github.com/ThibH/tungsten-ui/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["tungsten_ui"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/tungsten_ui",
+    "/README.md",
+    "/LICENSE",
+]
+exclude = [
+    "/documentation",
+    "*.pyc",
+    "/__pycache__",
+    "/node_modules",
+    "/dist",
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+  | node_modules
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88

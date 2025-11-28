@@ -1,0 +1,32 @@
+{
+  "name": "tungsten-ui",
+  "version": "0.1.0",
+  "description": "Tungsten UI - A Django component library with Cotton, HTMX, JavaScript, Tailwind CSS and DaisyUI",
+  "private": true,
+  "scripts": {
+    "dev": "npx @tailwindcss/cli -i ./tungsten_ui/static/tungsten_ui/css/input.css -o ./tungsten_ui/static/tungsten_ui/css/components.css --watch",
+    "build": "npx @tailwindcss/cli -i ./tungsten_ui/static/tungsten_ui/css/input.css -o ./tungsten_ui/static/tungsten_ui/css/components.css --minify",
+    "build-lucide": "node scripts/build-lucide.js",
+    "build-heroicons": "node scripts/build-heroicons.js"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.11",
+    "daisyui": "^5.5.5"
+  },
+  "keywords": [
+    "django",
+    "components",
+    "ui",
+    "tailwind",
+    "daisyui",
+    "htmx",
+    "javascript"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "heroicons": "^2.2.0",
+    "lucide": "^0.525.0",
+    "tailwindcss": "^4.1.11"
+  }
+}

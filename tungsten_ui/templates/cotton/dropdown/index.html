@@ -1,0 +1,52 @@
+{% comment %}
+Composant Dropdown avec DaisyUI et Alpine.js
+Usage:
+<c-dropdown label="Options" placement="end">
+    <a>Élément 1</a>
+    <a>Élément 2</a>
+    <a href="/settings">Paramètres</a>
+</c-dropdown>
+
+<c-dropdown label="Menu" icon="menu" placement="bottom-end">
+    <a>Accueil</a>
+    <a>À propos</a>
+    <a>Contact</a>
+</c-dropdown>
+
+<c-dropdown label="Profil" placement="end" btn_class="btn-primary">
+    <a>Mon profil</a>
+    <a>Paramètres</a>
+    <hr class="my-2">
+    <a>Déconnexion</a>
+</c-dropdown>
+
+Paramètres:
+- label: texte du bouton (requis)
+- icon: nom de l'icône Lucide (optionnel)
+- placement: position du dropdown (optionnel)
+  * "start" | "end" | "center" (horizontal)
+  * "top" | "bottom" (vertical) 
+  * "top-start" | "top-end" | "bottom-start" | "bottom-end" (combiné)
+- variant: classes CSS supplémentaires pour le bouton (optionnel, défaut: "btn-neutral")
+- content_class: classes CSS supplémentaires pour le contenu (optionnel)
+- hover: si true, s'ouvre au survol (optionnel, défaut: false)
+- open: si true, forcé ouvert (optionnel, défaut: false)
+{% endcomment %}
+
+<c-vars variant="neutral" placement="end" />
+
+<div class="dropdown{% if placement %} dropdown-{{ placement }}{% endif %}{% if hover %} dropdown-hover{% endif %}{% if open %} dropdown-open{% endif %}" {{ attrs }}>
+    <div tabindex="0" role="button" class="btn btn-{{ variant }} {% if circle %} btn-circle {% endif %}">
+        {% if icon %}
+            <c-icon name="{{ icon }}" />
+        {% endif %}
+        {{ label }}
+        {% if not icon and not icon_slot %}
+            <c-icon name="chevron-down" class="w-4 h-4" />
+        {% endif %}
+        {{ icon_slot }}
+    </div>
+    <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-10 w-52 p-2 border border-base-300 shadow {{ content_class }}">
+        {{ slot }}
+    </ul>
+</div>

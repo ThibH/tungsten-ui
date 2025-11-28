@@ -1,0 +1,70 @@
+{% comment %}
+Composant range slider à deux poignées
+Usage:
+<c-range-slider 
+    min="0" 
+    max="100" 
+    value_min="20" 
+    value_max="80"
+    step="1"
+    format="number" />
+
+Paramètres:
+- min: valeur minimale (défaut: 0)
+- max: valeur maximale (défaut: 100)
+- value_min: valeur initiale du minimum (défaut: min)
+- value_max: valeur initiale du maximum (défaut: max)
+- step: incrément (défaut: 1)
+- format: format d'affichage "number" ou "currency" (défaut: number)
+{% endcomment %}
+
+<c-vars 
+    min="0" 
+    max="100" 
+    step="1" 
+    format="number" 
+    value_min="{{ min }}" 
+    value_max="{{ max }}" />
+
+<div class="range-slider-container" 
+     data-range-slider
+     data-min="{{ min }}"
+     data-max="{{ max }}"
+     data-step="{{ step }}"
+     data-format="{{ format }}"
+     data-value-min="{{ value_min }}"
+     data-value-max="{{ value_max }}"
+     {{ attrs }}>
+    
+    <!-- Track principal -->
+    <div class="relative h-2 bg-base-300 rounded-full">
+        <!-- Zone sélectionnée -->
+        <div class="absolute h-full bg-base-content/20 rounded-full z-10" data-selection-track></div>
+        
+        <!-- Poignée minimum -->
+        <div class="absolute w-5 h-5 bg-base-content border-2 border-base-100 rounded-full shadow-md cursor-pointer transform -translate-x-1/2 -translate-y-1/2 top-1/2 hover:scale-110 transition-transform z-20"
+             data-handle-min
+             role="slider"
+             tabindex="0"
+             aria-label="Valeur minimale">
+        </div>
+        
+        <!-- Poignée maximum -->
+        <div class="absolute w-5 h-5 bg-base-content border-2 border-base-100 rounded-full shadow-md cursor-pointer transform -translate-x-1/2 -translate-y-1/2 top-1/2 hover:scale-110 transition-transform z-20"
+             data-handle-max
+             role="slider"
+             tabindex="0"
+             aria-label="Valeur maximale">
+        </div>
+    </div>
+    
+    <!-- Affichage des valeurs (optionnel) -->
+    <div class="flex justify-between mt-2 text-xs text-base-content/70">
+        <span data-display-min>{{ value_min }}</span>
+        <span data-display-max>{{ value_max }}</span>
+    </div>
+    
+    <!-- Inputs cachés pour stocker les valeurs -->
+    <input type="hidden" data-input-min value="{{ value_min }}">
+    <input type="hidden" data-input-max value="{{ value_max }}">
+</div>

@@ -1,0 +1,43 @@
+<c-vars direction="asc" align="left" sort_key="" class="" />
+
+{% comment %}
+Table column header - Individual column definition
+sortable: Can be clicked to sort
+sorted: Currently sorted column
+direction: Sort direction (asc/desc)
+sort_key: Data attribute key for sorting
+{% endcomment %}
+
+<th class="{% if align == 'center' %}text-center{% elif align == 'right' %}text-right{% else %}text-left{% endif %} {{ class }}" 
+    {{ attrs }}
+    {% if sortable %}data-sortable="true"{% endif %}
+    {% if sort_key %}data-sort-key="{{ sort_key }}"{% endif %}
+    {% if sorted %}data-sorted="{{ direction }}"{% endif %}>
+    
+    {% if sortable %}
+        <div class="flex items-center gap-2 cursor-pointer hover:text-base-content/80 transition-colors" 
+             onclick="sortTable(this)">
+            {{ slot }}
+            {% if sorted %}
+                {% if direction == "desc" %}
+                    <c-icon name="chevron-down" size="xs" class="text-primary" />
+                {% else %}
+                    <c-icon name="chevron-up" size="xs" class="text-primary" />
+                {% endif %}
+            {% else %}
+                <c-icon name="chevrons-up-down" size="xs" class="opacity-50" />
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="flex items-center gap-2">
+            {{ slot }}
+            {% if sorted %}
+                {% if direction == "desc" %}
+                    <c-icon name="chevron-down" size="xs" class="text-primary" />
+                {% else %}
+                    <c-icon name="chevron-up" size="xs" class="text-primary" />
+                {% endif %}
+            {% endif %}
+        </div>
+    {% endif %}
+</th>

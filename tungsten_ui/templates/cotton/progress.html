@@ -1,0 +1,40 @@
+{% comment %}
+Composant Progress avec DaisyUI
+Usage: <c-progress variant="primary" value="50" max="100" show_label="true">Loading...</c-progress>
+{% endcomment %}
+
+<c-vars
+    variant="neutral"
+    value=""
+    max="100"
+    show_label="false"
+    indeterminate="false"
+    title=""
+    label=""
+/>
+
+<div class="w-full">
+    {% if title %}
+        <div class="mb-2 text-sm font-medium text-base-content">{{ title }}</div>
+    {% endif %}
+
+    <div class="flex items-center gap-2">
+        <progress class="progress flex-1
+                         progress-{{ variant }}
+                         {{ class }}"
+                  {% if indeterminate != 'true' and value %}value="{{ value }}"{% endif %}
+                  {% if indeterminate != 'true' %}max="{{ max }}"{% endif %}
+                  {{ attrs }}>
+        </progress>
+
+        {% if show_label == 'true' and label %}
+            <span class="text-sm text-base-content/70 min-w-fit">{{ label }}</span>
+        {% elif show_label == 'true' and value and indeterminate != 'true' %}
+            <span class="text-sm text-base-content/70 min-w-fit">{{ value }}{% if max != '100' %}/{{ max }}{% else %}%{% endif %}</span>
+        {% endif %}
+    </div>
+
+    {% if slot %}
+        <div class="mt-1 text-xs text-base-content/60">{{ slot }}</div>
+    {% endif %}
+</div>

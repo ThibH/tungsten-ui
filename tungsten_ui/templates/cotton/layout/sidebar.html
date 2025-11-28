@@ -1,0 +1,37 @@
+<div class="drawer lg:drawer-open">
+  <input id="sidebar-drawer" type="checkbox" class="drawer-toggle" />
+
+  <div class="drawer-content flex flex-col">
+    <!-- Top navbar for mobile with hamburger -->
+    <div class="navbar bg-base-100 lg:hidden">
+      <div class="navbar-start">
+        <label for="sidebar-drawer" class="btn btn-square btn-ghost">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block h-6 w-6 stroke-current">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </label>
+      </div>
+      <div class="navbar-center">
+        <span class="text-lg font-semibold">{{ mobile_title|default:"Application" }}</span>
+      </div>
+      <div class="navbar-end">
+        {{ mobile_actions }}
+      </div>
+    </div>
+
+    <!-- Main content area -->
+    <main class="flex-1 bg-base-200" id="main">
+      {{ main }}
+    </main>
+  </div>
+
+  <!-- Sidebar drawer -->
+  <div class="drawer-side">
+    <label for="sidebar-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+    <div class="min-h-full">
+      <div class="menu p-4 w-80 min-h-screen bg-base-100 border-r border-base-300">
+        {{ nav }}
+      </div>
+    </div>
+  </div>
+</div>

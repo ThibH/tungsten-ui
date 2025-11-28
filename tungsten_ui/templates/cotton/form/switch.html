@@ -1,0 +1,131 @@
+<c-vars 
+    field=""
+    label=""
+    description=""
+    orientation="horizontal"
+    align="right"
+    size="md"
+    variant="default"
+    disabled="false"
+    checked="false"
+    id=""
+    name=""
+    value=""
+/>
+
+<!-- Switch container with label -->
+<div class="{% if orientation == 'vertical' %}flex flex-col gap-2{% else %}flex gap-3 {% if description %}items-start{% else %}items-center{% endif %}{% endif %} {% if field.errors %}form-control-error{% endif %}">
+    {% if orientation == "vertical" and label %}
+        <div class="flex flex-col gap-1">
+            <label class="label" for="{{ input_id }}">
+                <c-text variant="strong" size="sm" class="label-text">{{ label }}</c-text>
+            </label>
+            {% if description %}
+                <c-text variant="subtle" size="sm" class="label-text-alt">{{ description }}</c-text>
+            {% endif %}
+        </div>
+        
+        <!-- Switch element for vertical -->
+        <input 
+            type="checkbox"
+            class="toggle
+                {% if size != 'md' %}toggle-{{ size }}{% endif %}
+                {% if variant != 'default' %}toggle-{{ variant }}{% endif %}
+                {% if disabled == 'true' %}toggle-disabled{% endif %}
+                {% if field.errors %}toggle-error{% endif %}
+                {{ class }}
+            "
+            id="{{ input_id }}"
+            {% if name %}name="{{ name }}"{% elif field %}name="{{ field.name }}"{% endif %}
+            {% if value %}value="{{ value }}"{% elif field %}value="{{ field.value|default:'' }}"{% endif %}
+            {% if checked == 'true' or field.value %}checked{% endif %}
+            {% if disabled == 'true' %}disabled{% endif %}
+            {{ attrs }}
+        />
+    {% elif orientation == "horizontal" and label %}
+        {% if align == "left" %}
+            <!-- Switch first, then label -->
+            <input 
+                type="checkbox"
+                class="toggle
+                    {% if size != 'md' %}toggle-{{ size }}{% endif %}
+                    {% if variant != 'default' %}toggle-{{ variant }}{% endif %}
+                    {% if disabled == 'true' %}toggle-disabled{% endif %}
+                    {% if field.errors %}toggle-error{% endif %}
+                    {{ class }}
+                "
+                id="{{ input_id }}"
+                {% if name %}name="{{ name }}"{% elif field %}name="{{ field.name }}"{% endif %}
+                {% if value %}value="{{ value }}"{% elif field %}value="{{ field.value|default:'' }}"{% endif %}
+                {% if checked == 'true' or field.value %}checked{% endif %}
+                {% if disabled == 'true' %}disabled{% endif %}
+                {{ attrs }}
+            />
+            
+            <div class="flex flex-col gap-1">
+                <label class="label cursor-pointer" for="{{ input_id }}">
+                    <c-text variant="strong" size="sm" class="label-text">{{ label }}</c-text>
+                </label>
+                {% if description %}
+                    <c-text variant="subtle" size="sm" class="label-text-alt">{{ description }}</c-text>
+                {% endif %}
+            </div>
+        {% else %}
+            <!-- Label first, then switch (default) -->
+            <div class="flex flex-col gap-1">
+                <label class="label cursor-pointer" for="{{ input_id }}">
+                    <c-text variant="strong" size="sm" class="label-text">{{ label }}</c-text>
+                </label>
+                {% if description %}
+                    <c-text variant="subtle" size="sm" class="label-text-alt">{{ description }}</c-text>
+                {% endif %}
+            </div>
+            
+            <input 
+                type="checkbox"
+                class="toggle
+                    {% if size != 'md' %}toggle-{{ size }}{% endif %}
+                    {% if variant != 'default' %}toggle-{{ variant }}{% endif %}
+                    {% if disabled == 'true' %}toggle-disabled{% endif %}
+                    {% if field.errors %}toggle-error{% endif %}
+                    {{ class }}
+                "
+                id="{{ input_id }}"
+                {% if name %}name="{{ name }}"{% elif field %}name="{{ field.name }}"{% endif %}
+                {% if value %}value="{{ value }}"{% elif field %}value="{{ field.value|default:'' }}"{% endif %}
+                {% if checked == 'true' or field.value %}checked{% endif %}
+                {% if disabled == 'true' %}disabled{% endif %}
+                {{ attrs }}
+            />
+        {% endif %}
+    {% else %}
+        <!-- Switch only, no label -->
+        <input 
+            type="checkbox"
+            class="toggle
+                {% if size != 'md' %}toggle-{{ size }}{% endif %}
+                {% if variant != 'default' %}toggle-{{ variant }}{% endif %}
+                {% if disabled == 'true' %}toggle-disabled{% endif %}
+                {% if field.errors %}toggle-error{% endif %}
+                {{ class }}
+            "
+            id="{{ input_id }}"
+            {% if name %}name="{{ name }}"{% elif field %}name="{{ field.name }}"{% endif %}
+            {% if value %}value="{{ value }}"{% elif field %}value="{{ field.value|default:'' }}"{% endif %}
+            {% if checked == 'true' or field.value %}checked{% endif %}
+            {% if disabled == 'true' %}disabled{% endif %}
+            {{ attrs }}
+        />
+    {% endif %}
+</div>
+
+<!-- Error messages -->
+{% if field.errors %}
+    <div class="label">
+        <c-text variant="subtle" color="error" class="label-text-alt">
+            {% for error in field.errors %}
+                {{ error }}{% if not forloop.last %}<br>{% endif %}
+            {% endfor %}
+        </c-text>
+    </div>
+{% endif %}

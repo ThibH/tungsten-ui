@@ -1,0 +1,37 @@
+{% comment %}
+Composant de conteneur de filtres générique
+Usage:
+<c-filter-container target="my-items-container">
+    <c-dropdown label="Catégorie">
+        <c-filter-options filter-id="category" />
+    </c-dropdown>
+    <c-dropdown label="Prix" content_class="w-64">
+        <c-filter-range filter-id="price" format="currency" />
+    </c-dropdown>
+</c-filter-container>
+
+<div id="my-items-container">
+    <div class="card" data-filter-category="electronics" data-filter-price="100">...</div>
+    <div class="card" data-filter-category="books" data-filter-price="25">...</div>
+</div>
+
+Paramètres:
+- target: ID du conteneur à filtrer (obligatoire)
+- item_selector: sélecteur CSS des éléments à filtrer (défaut: "> *")
+- data_prefix: préfixe des data-attributes (défaut: "filter-")
+{% endcomment %}
+
+<c-vars itemselector=".card" dataprefix="filter-" />
+
+<div class="generic-filter-container" 
+     data-generic-filter="true"
+     data-target="{{ target }}"
+     data-item-selector="{% if itemselector %}{{ itemselector }}{% else %}.card{% endif %}"
+     data-data-prefix="{% if dataprefix %}{{ dataprefix }}{% else %}filter-{% endif %}"
+     {{ attrs }}>
+    
+    <div class="filter-controls flex flex-wrap gap-2 mb-4">
+        {{ slot }}
+    </div>
+    
+</div>

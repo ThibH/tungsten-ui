@@ -1,0 +1,73 @@
+{% comment %}
+Composant PricingTier pour utilisation dans un tableau de tarification
+Usage: <c-pricing_tier :tier="tier_data" :sections="sections_data"></c-pricing_tier>
+{% endcomment %}
+
+<c-vars
+    highlight="false"
+    button_variant="primary"
+/>
+
+<div class="pricing-tier border-b border-base-300 {% if highlight == 'true' %}bg-primary/5 border-primary{% endif %}">
+    <!-- Header avec titre, description, prix -->
+    <div class="p-6 text-center border-b border-base-300">
+        {% if tier.badge %}
+            <div class="badge badge-primary mb-2">{{ tier.badge }}</div>
+        {% endif %}
+
+        <h3 class="text-xl font-bold mb-2">{{ tier.title }}</h3>
+
+        {% if tier.description %}
+            <p class="text-base-content/70 text-sm mb-4">{{ tier.description }}</p>
+        {% endif %}
+
+        <!-- Prix -->
+        <div class="mb-4">
+            {% if tier.discount_price %}
+                <div class="text-sm text-base-content/50 line-through">{{ tier.discount_price }}</div>
+            {% endif %}
+            <div class="text-3xl font-bold">
+                {{ tier.price }}
+                {% if tier.billing_cycle %}
+                    <span class="text-sm font-normal text-base-content/70">{{ tier.billing_cycle }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Bouton d'action -->
+        {% if tier.button_label %}
+            <c-button variant="{{ button_variant }}" size="sm" class="w-full">
+                {{ tier.button_label }}
+            </c-button>
+        {% endif %}
+    </div>
+
+    <!-- Sections de fonctionnalités -->
+    {% if sections %}
+        {% for section in sections %}
+            <div class="border-b border-base-300 last:border-b-0">
+                {% for feature in section.features %}
+                    <div class="p-4 text-center border-b border-base-200/50 last:border-b-0">
+                        {% if feature.tiers %}
+                            {% for tier_id, value in feature.tiers.items %}
+                                {% if tier_id == tier.id %}
+                                    {% if value == True or value == "true" %}
+                                        <svg class="w-5 h-5 text-success mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    {% elif value == False or value == "false" %}
+                                        <svg class="w-5 h-5 text-base-content/30 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    {% else %}
+                                        <span class="text-sm font-medium">{{ value }}</span>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>

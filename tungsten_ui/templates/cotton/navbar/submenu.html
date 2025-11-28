@@ -1,0 +1,45 @@
+{% comment %}
+Composant Navbar Submenu pour les sous-menus déroulants
+Usage:
+<c-navbar.submenu label="Services" icon="services">
+    <c-navbar.item href="/web">Web Development</c-navbar.item>
+    <c-navbar.item href="/mobile">Mobile Apps</c-navbar.item>
+</c-navbar.submenu>
+
+<c-navbar.submenu label="Products" icon="box" badge="3">
+    <c-navbar.item href="/product1">Product 1</c-navbar.item>
+    <c-navbar.item href="/product2">Product 2</c-navbar.item>
+    <c-navbar.item href="/product3">Product 3</c-navbar.item>
+</c-navbar.submenu>
+
+Paramètres:
+- label: titre du sous-menu (requis)
+- icon: icône pour le titre
+- badge: badge sur le titre
+- expanded: sous-menu ouvert par défaut (défaut: false)
+- class: classes CSS supplémentaires
+{% endcomment %}
+
+<c-vars expanded="false" />
+
+<div class="dropdown dropdown-hover" x-data="{ open: {% if expanded %}true{% else %}false{% endif %} }">
+    <!-- Titre du sous-menu -->
+    <div tabindex="0" role="button" 
+         class="flex items-center gap-2 px-3 py-2 rounded-lg transition-colors hover:bg-base-300 cursor-pointer {{ class }}"
+         @click="open = !open"
+         {{ attrs }}>
+        {% if icon %}
+            <c-icon name="{{ icon }}" class="w-4 h-4 flex-shrink-0" />
+        {% endif %}
+        <span class="flex-1">{{ label }}</span>
+        {% if badge %}
+            <c-badge variant="secondary" size="sm">{{ badge }}</c-badge>
+        {% endif %}
+        <c-icon name="chevron-down" class="w-4 h-4 transition-transform" :class="{ 'rotate-180': open }" />
+    </div>
+
+    <!-- Menu déroulant -->
+    <div tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow border-base-300 border">
+        {{ slot }}
+    </div>
+</div>

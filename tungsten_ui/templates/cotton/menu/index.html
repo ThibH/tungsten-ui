@@ -1,0 +1,24 @@
+{% comment %}
+Composant Menu principal pour les dropdowns
+Usage:
+<c-menu>
+    <c-menu.item icon="user">Profile</c-menu.item>
+    <c-menu.item icon="settings">Settings</c-menu.item>
+    <c-menu.separator />
+    <c-menu.item variant="danger">Logout</c-menu.item>
+</c-menu>
+
+<c-menu width="w-64">
+    <c-menu.item>Custom width menu</c-menu.item>
+</c-menu>
+
+Paramètres:
+- width: largeur du menu (défaut: "w-52")
+- class: classes CSS supplémentaires
+{% endcomment %}
+
+<c-vars width="w-full"/>
+
+<ul class="menu {{ width }} {{ class }}" {{ attrs }}>
+    {{ slot }}
+</ul>

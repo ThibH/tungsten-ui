@@ -1,0 +1,173 @@
+{% comment %}
+Composant PricingTable pour afficher un tableau de comparaison de tarification
+Usage: <c-pricing_table :tiers="tiers_data" :sections="sections_data"></c-pricing_table>
+{% endcomment %}
+
+<c-vars
+    responsive="true"
+/>
+
+<div class="pricing-table {{ class }}" {{ attrs }}>
+
+    <!-- Version Desktop (tableau) -->
+    {% if responsive == 'true' %}
+        <div class="hidden lg:block">
+            <div class="overflow-x-auto">
+                <table class="table table-zebra w-full">
+                    <!-- Header avec les tiers -->
+                    <thead>
+                        <tr>
+                            <th class="w-1/4"></th>
+                            {% for tier in tiers %}
+                                <th class="text-center {% if tier.highlight %}bg-primary/10{% endif %}">
+                                    <div class="p-4">
+                                        {% if tier.badge %}
+                                            <div class="badge badge-primary mb-2">{{ tier.badge }}</div>
+                                        {% endif %}
+                                        <h3 class="text-lg font-bold mb-1">{{ tier.title }}</h3>
+                                        {% if tier.description %}
+                                            <p class="text-xs text-base-content/70 mb-3">{{ tier.description }}</p>
+                                        {% endif %}
+                                        <div class="mb-3">
+                                            <div class="text-2xl font-bold">
+                                                {{ tier.price }}
+                                                {% if tier.billing_cycle %}
+                                                    <span class="text-sm font-normal">{{ tier.billing_cycle }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% if tier.button_label %}
+                                            <c-button variant="primary" size="sm" class="w-full">
+                                                {{ tier.button_label }}
+                                            </c-button>
+                                        {% endif %}
+                                    </div>
+                                </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+
+                    <!-- Body avec les sections et fonctionnalités -->
+                    <tbody>
+                        {% for section in sections %}
+                            <!-- Titre de section -->
+                            <tr class="bg-base-200">
+                                <td colspan="{{ tiers|length|add:1 }}" class="font-semibold text-sm uppercase tracking-wide py-3">
+                                    {{ section.title }}
+                                </td>
+                            </tr>
+
+                            <!-- Fonctionnalités de la section -->
+                            {% for feature in section.features %}
+                                <tr>
+                                    <td class="font-medium">{{ feature.title }}</td>
+                                    {% for tier in tiers %}
+                                        <td class="text-center {% if tier.highlight %}bg-primary/5{% endif %}">
+                                            {% if feature.tiers %}
+                                                {% for tier_id, value in feature.tiers.items %}
+                                                    {% if tier_id == tier.id %}
+                                                        {% if value == True or value == "true" %}
+                                                            <svg class="w-5 h-5 text-success mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                            </svg>
+                                                        {% elif value == False or value == "false" %}
+                                                            <svg class="w-5 h-5 text-base-content/30 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                            </svg>
+                                                        {% else %}
+                                                            <span class="font-medium">{{ value }}</span>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+                                        </td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Version Mobile (cartes empilées) -->
+        <div class="lg:hidden space-y-6">
+            {% for tier in tiers %}
+                <c-pricing_tier :tier="tier" :sections="sections" highlight="{{ tier.highlight|default:'false' }}"></c-pricing_tier>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <!-- Version non-responsive (toujours en tableau) -->
+        <div class="overflow-x-auto">
+            <table class="table table-zebra w-full">
+                <thead>
+                    <tr>
+                        <th class="w-1/4"></th>
+                        {% for tier in tiers %}
+                            <th class="text-center {% if tier.highlight %}bg-primary/10{% endif %}">
+                                <div class="p-4">
+                                    {% if tier.badge %}
+                                        <div class="badge badge-primary mb-2">{{ tier.badge }}</div>
+                                    {% endif %}
+                                    <h3 class="text-lg font-bold mb-1">{{ tier.title }}</h3>
+                                    {% if tier.description %}
+                                        <p class="text-xs text-base-content/70 mb-3">{{ tier.description }}</p>
+                                    {% endif %}
+                                    <div class="mb-3">
+                                        <div class="text-2xl font-bold">
+                                            {{ tier.price }}
+                                            {% if tier.billing_cycle %}
+                                                <span class="text-sm font-normal">{{ tier.billing_cycle }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% if tier.button_label %}
+                                        <c-button variant="primary" size="sm" class="w-full">
+                                            {{ tier.button_label }}
+                                        </c-button>
+                                    {% endif %}
+                                </div>
+                            </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for section in sections %}
+                        <tr class="bg-base-200">
+                            <td colspan="{{ tiers|length|add:1 }}" class="font-semibold text-sm uppercase tracking-wide py-3">
+                                {{ section.title }}
+                            </td>
+                        </tr>
+                        {% for feature in section.features %}
+                            <tr>
+                                <td class="font-medium">{{ feature.title }}</td>
+                                {% for tier in tiers %}
+                                    <td class="text-center {% if tier.highlight %}bg-primary/5{% endif %}">
+                                        {% if feature.tiers %}
+                                            {% for tier_id, value in feature.tiers.items %}
+                                                {% if tier_id == tier.id %}
+                                                    {% if value == True or value == "true" %}
+                                                        <svg class="w-5 h-5 text-success mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                        </svg>
+                                                    {% elif value == False or value == "false" %}
+                                                        <svg class="w-5 h-5 text-base-content/30 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                        </svg>
+                                                    {% else %}
+                                                        <span class="font-medium">{{ value }}</span>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</div>

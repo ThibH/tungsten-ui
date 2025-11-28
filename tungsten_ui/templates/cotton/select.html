@@ -1,0 +1,26 @@
+<!-- Select component -->
+
+<div class="form-control" x-data="{
+                                  options: {{ options|safe }},
+                                  selected: null,
+                                  fetchOptions: function() {
+                                  fetch(`{% url 'demo:get_options' %}`)
+                                  .then(response => response.json())
+                                  .then(data => {
+                                  this.options = data;
+                                  });
+                                  }
+                                  }"
+>
+    <label class="label">
+        <span class="label-text">{{ label }}</span>
+    </label>
+    <select x-model="selected" class="select select-bordered">
+        <template x-for="opt in options" :key="opt">
+            <option :value="opt" x-text="opt"></option>
+        </template>
+    </select>
+    <button @click="fetchOptions()" class="btn btn-primary">
+        Charger les options
+    </button>
+</div>

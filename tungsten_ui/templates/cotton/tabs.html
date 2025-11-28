@@ -1,0 +1,5 @@
+<c-vars variant="default" size="md" orientation="horizontal" />
+
+<div class="tabs{% if variant == 'segmented' %} tabs-segmented{% elif variant == 'pill' %} tabs-pill{% endif %}{% if size == 'sm' %} tabs-sm{% elif size == 'lg' %} tabs-lg{% endif %}{% if orientation == 'vertical' %} tabs-vertical {% endif %} {{ class }}" {{ attrs }}>
+    {{ slot }}
+</div>

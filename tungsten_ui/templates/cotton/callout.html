@@ -1,0 +1,62 @@
+<c-vars variant="secondary"
+icon=""
+heading=""
+text=""
+color=""
+icon_slot=""
+slot=""
+actions=""
+controls=""
+/>
+
+<div class="callout callout-{{ variant }}{% if color %} callout-{{ color }}{% endif %} {{ class }}" {{ attrs }}>
+    {% if dismissible %}
+    <button class="callout-close" onclick="this.parentElement.remove()">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+    </button>
+    {% endif %}
+    
+    <div class="callout-content">
+        {% if icon or heading %}
+        <div class="callout-header">
+            {% if icon %}
+            <div class="callout-icon">
+                <c-icon name="{{ icon }}" />
+            </div>
+            {% endif %}
+            {% if icon_slot %}
+                <div class="callout-icon">
+                    {{ icon_slot }}
+                </div>
+            {% endif %}
+            {% if heading %}
+            <h3 class="callout-heading">{{ heading }}</h3>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        {% if text %}
+        <div class="callout-text">{{ text }}</div>
+        {% endif %}
+        
+        {% if slot %}
+        <div class="callout-body">
+            {{ slot }}
+        </div>
+        {% endif %}
+        
+        {% if actions %}
+        <div class="callout-actions{% if inline %} callout-actions-inline{% endif %}">
+            {{ actions }}
+        </div>
+        {% endif %}
+        
+        {% if controls %}
+        <div class="callout-controls">
+            {{ controls }}
+        </div>
+        {% endif %}
+    </div>
+</div>

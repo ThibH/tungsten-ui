@@ -1,0 +1,1 @@
+# Fichier vide pour faire du dossier templatetags un package Python 

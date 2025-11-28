@@ -1,0 +1,9 @@
+<div
+    x-data
+    x-on:toast.window="$store.toaster.add($event.detail)"
+    class="fixed bottom-0 right-0 flex w-full max-w-sm flex-col space-y-4 pr-4 pb-4 sm:justify-start z-10"
+    role="status"
+    aria-live="polite"
+>
+    <c-toast></c-toast>
+</div>

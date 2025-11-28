@@ -1,0 +1,22 @@
+{% comment %}
+Composant Badge avec DaisyUI
+Usage: <c-badge variant="primary">Mon badge</c-badge>
+{% endcomment %}
+
+<c-vars
+    variant="neutral"
+    size="md"
+/>
+
+<span class="badge
+             badge-{{ size }}
+             badge-{{ variant }}
+             {{ class }}" {{ attrs }}>
+    {% if icon %}
+        <c-icon name="{{ icon }}" class="w-3 h-3 mr-1"></c-icon>
+    {% endif %}
+    {{ slot }}
+    {% if icon_trailing %}
+        <c-icon name="{{ icon_trailing }}" class="w-3 h-3 ml-1"></c-icon>
+    {% endif %}
+</span>

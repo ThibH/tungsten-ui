@@ -1,0 +1,113 @@
+{% comment %}
+Composant Navbar avec DaisyUI et système de drawer pour mobile
+
+Usage:
+<c-layout.partial.navbar>
+    <c-slot name="logo">
+        <a href="/" class="text-xl font-bold">Mon App</a>
+    </c-slot>
+    <c-slot name="start">
+        <a href="/about" class="btn btn-ghost">À propos</a>
+        <a href="/contact" class="btn btn-ghost">Contact</a>
+    </c-slot>
+    <c-slot name="center">
+        <input type="text" placeholder="Rechercher..." class="input input-bordered" />
+    </c-slot>
+    <c-slot name="end">
+        <c-button>Connexion</c-button>
+        <c-dropdown variant="ghost" placement="end" hover circle>
+            <c-slot name="icon_slot">
+                <img src="/avatar.jpg" alt="Profil" class="rounded-full" />
+            </c-slot>
+            <li><a>Mon profil</a></li>
+            <li><a>Déconnexion</a></li>
+        </c-dropdown>
+    </c-slot>
+</c-layout.partial.navbar>
+
+Paramètres:
+- sticky: true/false - navbar collante avec animation smart scroll
+- centered: true/false - centre le contenu dans un container
+- class: classes CSS additionnelles
+
+Slots:
+- logo: Logo/branding (affiché aussi dans le drawer mobile)
+- start: Navigation principale à gauche (après le logo)
+- center: Contenu central (recherche, etc.)
+- end: Contenu à droite (boutons, profil, etc.)
+
+Fonctionnalités:
+- Responsive avec drawer mobile automatique
+- Smart navbar sticky avec Alpine.js (hide/show au scroll)
+- Zones flexibles alignées avec DaisyUI (navbar-start, navbar-center, navbar-end)
+{% endcomment %}
+
+<div class="drawer {% if centered %}container mx-auto rounded-full {% endif %} {% if sticky %}sticky z-50 mb-4{% endif %} {{ class }}"
+{% if sticky %}x-data="smartNavbar" x-bind:class="{
+                                                         'bg-base-100/80 backdrop-blur-sm': hasScrolled,
+                                                         'shadow-sm': hasScrolled && !isHidden,
+                                                         '-translate-y-full': isHidden,
+                                                         'transition-all duration-200': isInitialized,
+                                                         'top-4': !isHidden,
+                                                         'top-0': isHidden
+                                                         }"{% endif %}>
+    <input id="navbar-drawer" type="checkbox" class="drawer-toggle" />
+    <div class="drawer-content flex flex-col">
+      <div class="navbar px-8">
+        <div class="navbar-start">
+          {% if start or center or end %}
+          <div class="flex-none lg:hidden">
+            <label for="navbar-drawer" aria-label="open sidebar" class="btn btn-square btn-ghost">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block h-6 w-6 stroke-current">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+            </label>
+          </div>
+          {% endif %}
+          <div class="flex items-center">
+            {{ logo }}
+          </div>
+          {% if start %}
+          <nav class="hidden lg:flex lg:items-center lg:gap-2">
+            {{ start }}
+          </nav>
+          {% endif %}
+        </div>
+        {% if center %}
+        <div class="navbar-center hidden lg:flex">
+          <nav class="flex items-center gap-2">
+            {{ center }}
+          </nav>
+        </div>
+        {% endif %}
+        {% if end %}
+        <div class="navbar-end hidden lg:flex items-center gap-2">
+          {{ end }}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    <div class="drawer-side z-50">
+      <label for="navbar-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+      <div class="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
+        <div class="flex items-center justify-center mb-4">
+          {{ logo }}
+        </div>
+        {% if start %}
+        <nav class="flex flex-col gap-1">
+          {{ start }}
+        </nav>
+        {% endif %}
+        {% if center %}
+        <nav class="flex flex-col gap-1 mt-4">
+          {{ center }}
+        </nav>
+        {% endif %}
+        {% if end %}
+        <nav class="flex flex-col gap-1 mt-4">
+          {{ end }}
+        </nav>
+        {% endif %}
+      </div>
+    </div>
+  </div>

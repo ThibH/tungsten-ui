@@ -1,0 +1,71 @@
+{% comment %}
+Range filter component (without dropdown wrapper)
+Usage in a dropdown:
+<c-dropdown label="Price" placement="end">
+    <c-filter-range filter-id="price" label="Price" format="currency" />
+</c-dropdown>
+
+Usage in a modal:
+<c-modal id="filter-modal">
+    <h3>Filters</h3>
+    <c-filter-range filter-id="salary" label="Salary" format="currency" show-label="true" />
+</c-modal>
+
+Standalone usage:
+<c-filter-range filter-id="age" label="Age" show-label="true" />
+
+Parameters:
+- filter_id: filter identifier (must match the data-filter-id of the column)
+- label: label text (optional)
+- format: "currency", "number" (optional, default: "number")
+- show_label: display the label (optional, default: false)
+{% endcomment %}
+
+<c-vars format="number" show_label="false" />
+
+<div data-filter-range="{{ filter_id }}"
+     data-format="{{ format }}"
+     {{ attrs }}>
+    
+    <div class="space-y-4 p-3">
+        {% if show_label and label %}
+        <div class="text-sm font-medium text-base-content">{{ label }}</div>
+        {% endif %}
+        
+        <div class="grid grid-cols-2 gap-3">
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text text-xs">Min</span>
+                </label>
+                <input type="number" 
+                       class="input input-sm input-bordered w-full" 
+                       data-min-input
+                       placeholder="Min">
+            </div>
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text text-xs">Max</span>
+                </label>
+                <input type="number" 
+                       class="input input-sm input-bordered w-full" 
+                       data-max-input
+                       placeholder="Max">
+            </div>
+        </div>
+        
+        <!-- Range Slider -->
+        <div class="mt-4">
+            <c-range-slider 
+                data-filter-range-slider
+                format="{{ format }}" />
+        </div>
+        
+        <div class="text-xs text-base-content/70 text-center bg-base-200 p-2 rounded" data-range-display>
+            <!-- Range display will be updated by JavaScript -->
+        </div>
+        
+        <c-button variant="ghost" size="xs" class="w-full hidden" data-reset-range icon="refresh-ccw">
+            Reset
+        </c-button>
+    </div>
+</div>

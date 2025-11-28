@@ -1,0 +1,9 @@
+<c-vars align="left" class="" />
+
+{% comment %}
+Table cell - Individual table cell
+{% endcomment %}
+
+<td class="{% if align == 'center' %}text-center{% elif align == 'right' %}text-right{% else %}text-left{% endif %} {{ class }}" {{ attrs }}>
+    {{ slot }}
+</td>

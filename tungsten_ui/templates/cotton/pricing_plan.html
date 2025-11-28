@@ -1,0 +1,67 @@
+{% comment %}
+Composant PricingPlan avec DaisyUI
+Usage: <c-pricing_plan title="Solo" price="$29" period="/mois" features="feature1,feature2,feature3" button_label="Commencer"></c-pricing_plan>
+{% endcomment %}
+
+<c-vars
+    variant="outline"
+    highlight="false"
+    badge=""
+    button_variant="primary"
+    button_size="md"
+/>
+
+<div class="card bg-base-100 shadow-xl {% if highlight == 'true' %}ring-2 ring-primary{% endif %} {{ class }}" {{ attrs }}>
+    {% if badge %}
+        <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+            <div class="badge badge-primary">{{ badge }}</div>
+        </div>
+    {% endif %}
+
+    <div class="card-body text-center">
+        <!-- Title & Description -->
+        <h2 class="card-title justify-center text-2xl">{{ title }}</h2>
+        {% if description %}
+            <p class="text-base-content/70 mb-4">{{ description }}</p>
+        {% endif %}
+
+        <!-- Price -->
+        <div class="mb-6">
+            {% if discount_price %}
+                <div class="text-sm text-base-content/50 line-through">{{ discount_price }}</div>
+            {% endif %}
+            <div class="text-4xl font-bold">
+                {{ price }}
+                {% if period %}
+                    <span class="text-lg font-normal text-base-content/70">{{ period }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Features -->
+        {% if features %}
+            <ul class="space-y-2 mb-6 text-left">
+                {% for feature in features %}
+                    <li class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        {{ feature }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <!-- Action Button -->
+        {% if button_label %}
+            <div class="card-actions justify-center">
+                <c-button variant="{{ button_variant }}" size="{{ button_size }}" class="w-full">
+                    {{ button_label }}
+                </c-button>
+            </div>
+        {% endif %}
+
+        <!-- Slot for custom content -->
+        {{ slot }}
+    </div>
+</div>

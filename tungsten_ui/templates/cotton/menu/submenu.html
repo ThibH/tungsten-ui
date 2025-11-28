@@ -1,0 +1,40 @@
+{% comment %}
+Composant Menu Submenu pour les sous-menus
+Usage:
+<c-menu.submenu label="Sort by">
+    <c-menu.item>Name</c-menu.item>
+    <c-menu.item>Date</c-menu.item>
+    <c-menu.item>Size</c-menu.item>
+</c-menu.submenu>
+
+<c-menu.submenu icon="folder" label="Folders">
+    <c-menu.item icon="folder">Documents</c-menu.item>
+    <c-menu.item icon="folder">Downloads</c-menu.item>
+</c-menu.submenu>
+
+Paramètres:
+- label: titre du sous-menu (requis)
+- icon: icône pour le titre
+- collapsed: sous-menu fermé par défaut (défaut: false)
+- class: classes CSS supplémentaires
+{% endcomment %}
+
+<c-vars collapsed="false" />
+
+<li x-data="{ open: {% if collapsed %}false{% else %}true{% endif %} }">
+    <!-- Titre du sous-menu -->
+    <div class="menu-title flex items-center gap-2 px-3 py-2 text-sm font-medium text-base-content/70 cursor-pointer"
+         @click="open = !open"
+         {{ attrs }}>
+        {% if icon %}
+            <c-icon name="{{ icon }}" class="w-4 h-4" />
+        {% endif %}
+        <span class="flex-1">{{ label }}</span>
+        <c-icon name="chevron-down" class="w-4 h-4 transition-transform" :class="{ 'rotate-180': open }" />
+    </div>
+
+    <!-- Contenu du sous-menu -->
+    <ul x-show="open" x-transition class="ml-4 space-y-1 {{ class }}">
+        {{ slot }}
+    </ul>
+</li>

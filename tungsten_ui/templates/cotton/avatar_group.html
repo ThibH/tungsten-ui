@@ -1,0 +1,18 @@
+{% comment %}
+Composant Avatar Group avec DaisyUI
+Usage: 
+<c-avatar-group>
+    <c-avatar src="image1.jpg" size="w-12" alt="Team member 1"></c-avatar>
+    <c-avatar placeholder size="w-12" bg_color="bg-info" text_color="text-info-content">JS</c-avatar>
+    <c-avatar placeholder size="w-12" bg_color="bg-neutral" text_color="text-neutral-content">+5</c-avatar>
+</c-avatar-group>
+
+Paramètres:
+- spacing: espacement entre les avatars en nombre (défaut: 3) - 1=serré, 6=large (logique inversée)
+{% endcomment %}
+
+<c-vars spacing="3" />
+
+<div class="avatar-group {% if spacing == "1" %}-space-x-6{% elif spacing == "2" %}-space-x-4{% elif spacing == "3" %}-space-x-3{% elif spacing == "4" %}-space-x-2{% elif spacing == "5" %}-space-x-2{% elif spacing == "6" %}-space-x-1{% elif spacing == "7" %}-space-x-1{% elif spacing == "8" %}-space-x-1{% else %}-space-x-3{% endif %} {{ class }}" {{ attrs }}>
+    {{ slot }}
+</div>

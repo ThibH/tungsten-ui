@@ -1,0 +1,25 @@
+{% comment %}
+Usage:
+<c-theme-picker :themes="['light', 'dark', 'retro', 'pastel', 'abyss', 'lofi', 'nord', 'dracula']" />
+
+Paramètres:
+- theme: "default", "dark", "retro", "pastel", "abyss", "lofi", "nord", "dracula"
+- class: classes CSS supplémentaires
+
+{% endcomment %}
+
+<c-vars :themes="['light', 'dark', 'retro', 'pastel', 'abyss', 'lofi', 'nord', 'dracula']" />
+
+<div class="join join-vertical">
+    <c-menu>
+    {% for theme in themes %}
+        <c-menu.item>
+          <c-radio name="theme-buttons" value="{{ theme }}" class="theme-controller" label="{{ theme }}" full/>            
+        </c-menu.item>
+    {% endfor %}
+    </c-menu>
+  </div>
+
+
+
+

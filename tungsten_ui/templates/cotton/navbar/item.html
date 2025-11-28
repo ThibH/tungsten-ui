@@ -1,0 +1,60 @@
+{% comment %}
+Composant Navbar Item pour les éléments de navigation
+Usage:
+<c-navbar.item href="/" icon="home">Home</c-navbar.item>
+<c-navbar.item href="/inbox" icon="mail" badge="12">Inbox</c-navbar.item>
+<c-navbar.item current icon="dashboard">Dashboard</c-navbar.item>
+<c-navbar.item icon="settings" icon_trailing="chevron-right">Settings</c-navbar.item>
+<c-navbar.item href="/notifications" icon="bell" badge="3" badge_variant="error">Notifications</c-navbar.item>
+
+Paramètres:
+- href: URL de destination
+- icon: icône à gauche
+- icon_trailing: icône à droite
+- badge: badge avec contenu (nombre ou texte)
+- badge_variant: variant du badge ("neutral", "primary", "secondary", "success", "warning", "error")
+- current: état actif/courant
+- class: classes CSS supplémentaires
+{% endcomment %}
+
+<c-vars badge_variant="neutral" />
+
+{% if href %}
+    <a href="{{ href }}"
+       class="flex items-center gap-2 px-3 py-2 rounded-lg transition-colors hover:bg-base-300 {% if current %} text-base-content font-medium{% endif %} {{ class }}"
+       :class="{ 'text-base-content font-medium': activeItem === $el }"
+       @click="setActive($el)"
+       {{ attrs }}>
+{% elif 'hx-get' in attrs %}
+    <button class="flex items-center gap-2 px-3 py-2 rounded-lg transition-colors hover:bg-base-300 {% if current %} text-base-content font-medium{% endif %} {{ class }}"
+            :class="{ 'text-base-content font-medium bg-base-300': activeItem === $el }"
+            @click="setActive($el)"
+            {{ attrs }}>
+{% else %}
+    <div class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-base-300 {% if current %}text-base-content font-medium{% endif %} {{ class }}"
+         :class="{ 'text-base-content font-medium bg-base-300': activeItem === $el }"
+         @click="setActive($el)"
+         {{ attrs }}>
+{% endif %}
+
+{% if icon %}
+    <c-icon name="{{ icon }}" class="w-4 h-4 flex-shrink-0" />
+{% endif %}
+
+<span class="flex-1">{{ slot }}</span>
+
+{% if badge %}
+    <c-badge variant="{{ badge_variant }}" size="sm">{{ badge }}</c-badge>
+{% endif %}
+
+{% if icon_trailing %}
+    <c-icon name="{{ icon_trailing }}" class="w-4 h-4 flex-shrink-0" />
+{% endif %}
+
+{% if href %}
+    </a>
+{% elif 'hx-get' in attrs %}
+    </button>
+{% else %}
+    </div>
+{% endif %}

@@ -1,0 +1,37 @@
+{% comment %}
+Composant Menu Item pour les éléments de menu
+Usage:
+<c-menu.item icon="user">Profile</c-menu.item>
+<c-menu.item href="/settings" icon="settings">Settings</c-menu.item>
+<c-menu.item variant="danger" icon="trash">Delete</c-menu.item>
+<c-menu.item disabled>Disabled item</c-menu.item>
+<c-menu.item icon_trailing="arrow-right">With trailing icon</c-menu.item>
+
+Paramètres:
+- icon: icône à gauche
+- icon_trailing: icône à droite
+- href: URL pour transformer en lien
+- variant: style ("default", "danger")
+- disabled: désactiver l'élément
+- class: classes CSS supplémentaires
+{% endcomment %}
+
+<c-vars variant="default" />
+
+<li>
+    {% if href %}
+        <a href="{{ href }}"
+           class="flex items-center gap-2 px-3 py-2 rounded-lg transition-colors {% if variant == 'danger' %}text-error hover:bg-error/10{% else %}hover:bg-base-200{% endif %} {% if disabled %}opacity-50 pointer-events-none{% endif %} {{ class }}"
+           {{ attrs }}>
+    {% endif %}
+    {% if icon %}
+        <c-icon name="{{ icon }}" class="w-4 h-4 flex-shrink-0" />
+    {% endif %}
+    <span class="flex flex-1">{{ slot }}</span>
+    {% if icon_trailing %}
+        <c-icon name="{{ icon_trailing }}" class="w-4 h-4 flex-shrink-0" />
+    {% endif %}
+    {% if href %}
+        </a>
+    {% endif %}
+</li>

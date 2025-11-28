@@ -1,0 +1,32 @@
+{% comment %}
+Composant Avatar avec DaisyUI
+Usage:
+  <c-avatar src="image.jpg" size="lg">JD</c-avatar>
+  <c-avatar color="primary" circle>JD</c-avatar>
+  <c-avatar color="bg-blue-500" text_color="text-white">AB</c-avatar>
+{% endcomment %}
+
+<c-vars
+    src=""
+    size="md"
+    color="neutral"
+    text_color=""
+/>
+
+<div class="avatar
+            {% if not src %}avatar-placeholder{% endif %}
+            {% if online is True %}online{% elif online is False %}offline{% endif %}
+            {{ class }}" {{ attrs }}>
+    <div class="{% if size == 'xs' %}w-8{% elif size == 'sm' %}w-10{% elif size == 'lg' %}w-16{% elif size == 'xl' %}w-24{% else %}w-12{% endif %}
+                {% if circle %}rounded-full{% else %}rounded{% endif %}
+                {% if not src %}{% if color == 'primary' %}bg-primary text-primary-content{% elif color == 'secondary' %}bg-secondary text-secondary-content{% elif color == 'accent' %}bg-accent text-accent-content{% elif color == 'neutral' %}bg-neutral text-neutral-content{% elif color == 'info' %}bg-info text-info-content{% elif color == 'success' %}bg-success text-success-content{% elif color == 'warning' %}bg-warning text-warning-content{% elif color == 'error' %}bg-error text-error-content{% else %}{{ color }}{% endif %}{% if text_color %} {{ text_color }}{% endif %}{% endif %}
+                {% if ring %}ring ring-primary ring-offset-base-100 ring-offset-2{% endif %}">
+        {% if src %}
+            <img src="{{ src }}" alt="{{ alt|default:'Avatar' }}" />
+        {% else %}
+            <span class="{% if size == 'xs' %}text-xs{% elif size == 'sm' %}text-xs{% elif size == 'lg' %}text-lg{% elif size == 'xl' %}text-xl{% else %}text-sm{% endif %}">
+                {{ slot }}
+            </span>
+        {% endif %}
+    </div>
+</div>

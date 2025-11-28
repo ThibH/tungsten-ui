@@ -1,0 +1,21 @@
+{% load components_tags %}
+<div class="w-full max-w-xs">
+    <input type="range" min="{{ min }}"
+           max="{{ max }}"
+           value="{{ value }}"
+           class="range range-xs"
+           step="{{ step }}" />
+
+    {% if show_steps %}
+        <div class="flex justify-between px-2.5 mt-2 text-xs">
+            {% for i in max|to_range %}
+                <span>|</span>
+            {% endfor %}
+        </div>
+        <div class="flex justify-between px-2.5 mt-2 text-xs">
+            {% for i in max|to_range %}
+                <span>{{ i }}</span>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

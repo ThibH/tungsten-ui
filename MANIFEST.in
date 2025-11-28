@@ -1,0 +1,25 @@
+# Include essential files
+include README.md
+include LICENSE
+
+# Include all templates and static files
+recursive-include tungsten_ui/templates *
+recursive-include tungsten_ui/static *
+
+# Exclude development and build files
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+global-exclude .gitignore
+global-exclude .pypirc
+global-exclude .pypirc.example
+global-exclude PUBLISHING.md
+global-exclude CLAUDE.md
+global-exclude package.json
+global-exclude package-lock.json
+global-exclude tailwind.config.js
+global-exclude scripts/*
+global-exclude node_modules/*
+global-exclude dist/*
+global-exclude build/*
+global-exclude *.egg-info
+exclude documentation/

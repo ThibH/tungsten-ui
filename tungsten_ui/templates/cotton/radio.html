@@ -1,0 +1,123 @@
+<c-vars variant="default"
+        size="md"
+        label=""
+        description=""
+        icon=""
+        name=""
+        value=""
+        id=""
+        color="primary" />
+
+{% comment %}
+Radio component with multiple variants:
+- default: Basic radio with label
+- pill: Pill-style radio  
+- card: Card-style radio
+- button: Button-style radio
+
+Supports automatic label/description clicking and card interactions via CSS :has() pseudo-class
+Use the 'id' and 'name' attributes to group radios and provide unique identifiers
+{% endcomment %}
+
+{% if variant == "default" %}
+    <label class="label cursor-pointer justify-start gap-3 p-0 {% if full %}w-full{% endif %} {% if disabled %}opacity-50 cursor-not-allowed{% endif %} " {{ attrs }}>
+        <input 
+            type="radio" 
+            class="radio radio-{{ size }} {% if disabled %}radio-disabled{% endif %} {{ class }}"
+            {% if id %}id="{{ id }}"{% endif %}
+            {% if name %}name="{{ name }}"{% endif %}
+            {% if value %}value="{{ value }}"{% endif %}
+            {% if checked %}checked{% endif %}
+            {% if disabled %}disabled{% endif %}
+        />
+        <div class="flex flex-col">
+            {% if label %}
+                <c-text variant="default">{{ label }}</c-text>
+            {% endif %}
+            {% if description %}
+                <c-text variant="subtle" size="sm">{{ description }}</c-text>
+            {% endif %}
+        </div>
+        {% if icon %}
+            <c-icon name="{{ icon }}" size="md" class="ml-auto" />
+        {% endif %}
+    </label>
+
+{% elif variant == "pill" %}
+    <label class="inline-flex items-center gap-2 px-3 py-2 rounded-full border border-base-300 cursor-pointer transition-all duration-200 hover:border-base-400 has-[:checked]:bg-{{ color }} has-[:checked]:text-{{ color }}-content has-[:checked]:border-{{ color }} {% if disabled %}opacity-50 cursor-not-allowed{% endif %} " {{ attrs }}>
+        <input 
+            type="radio" 
+            class="radio radio-xs hidden {{ class }}"
+            {% if id %}id="{{ id }}"{% endif %}
+            {% if name %}name="{{ name }}"{% endif %}
+            {% if value %}value="{{ value }}"{% endif %}
+            {% if checked %}checked{% endif %}
+            {% if disabled %}disabled{% endif %}
+        />
+        {% if icon %}
+            <c-icon name="{{ icon }}" size="sm" />
+        {% endif %}
+        {% if label %}
+            <c-text variant="default" size="sm">{{ label }}</c-text>
+        {% endif %}
+        {% if description %}
+            <c-text variant="subtle" size="xs">{{ description }}</c-text>
+        {% endif %}
+    </label>
+
+{% elif variant == "card" %}
+    <label class="block p-4 border border-base-300 rounded-lg cursor-pointer transition-all duration-200 hover:border-base-400 hover:shadow-sm has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:checked]:shadow-md {% if disabled %}opacity-50 cursor-not-allowed{% endif %} " {{ attrs }}>
+        <div class="flex items-start gap-3">
+            <input 
+                type="radio" 
+                class="radio radio-{{ size }} mt-0.5 {{ class }}"
+                {% if id %}id="{{ id }}"{% endif %}
+                {% if name %}name="{{ name }}"{% endif %}
+                {% if value %}value="{{ value }}"{% endif %}
+                {% if checked %}checked{% endif %}
+                {% if disabled %}disabled{% endif %}
+            />
+            {% if icon %}
+                <div class="flex-shrink-0 mt-0.5">
+                    <c-icon name="{{ icon }}" size="md" class="text-base-content/60" />
+                </div>
+            {% endif %}
+            <div class="flex-1 min-w-0">
+                {% if label %}
+                    <c-text variant="default" size="md">{{ label }}</c-text>
+                {% endif %}
+                {% if description %}
+                    <c-text variant="subtle" size="sm" class="mt-1">{{ description }}</c-text>
+                {% endif %}
+                {% if slot %}
+                    <div class="mt-2">
+                        {{ slot }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </label>
+
+{% elif variant == "button" %}
+        <label class="inline-flex items-center gap-2 px-4 py-2 border border-base-300 rounded-md cursor-pointer transition-all duration-200 hover:bg-base-200 has-[:checked]:bg-{{ color }} has-[:checked]:text-{{ color }}-content has-[:checked]:border-{{ color }} {% if disabled %}opacity-50 cursor-not-allowed{% endif %} " {{ attrs }}>
+        <input 
+            type="radio" 
+            class="radio radio-xs hidden {{ class }}"
+            {% if id %}id="{{ id }}"{% endif %}
+            {% if name %}name="{{ name }}"{% endif %}
+            {% if value %}value="{{ value }}"{% endif %}
+            {% if checked %}checked{% endif %}
+            {% if disabled %}disabled{% endif %}
+        />
+        {% if icon %}
+            <c-icon name="{{ icon }}" size="sm" />
+        {% endif %}
+        {% if label %}
+            <c-text variant="default">{{ label }}</c-text>
+        {% endif %}
+        {% if description %}
+            <c-text variant="subtle" size="xs">{{ description }}</c-text>
+        {% endif %}
+    </label>
+
+{% endif %}

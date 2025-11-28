@@ -1,0 +1,13 @@
+{% comment %}
+Composant Menu Separator pour séparer les éléments de menu
+Usage:
+<c-menu.separator />
+<c-menu.separator class="my-4" />
+
+Paramètres:
+- class: classes CSS supplémentaires
+{% endcomment %}
+
+<li class="menu-separator">
+    <hr class="my-2 border-base-300 {{ class }}" {{ attrs }} />
+</li>

@@ -1,0 +1,61 @@
+<c-vars variant="default" class="" />
+
+{% comment %}
+Table component - Main table container
+Supports multiple variants, responsive design, and advanced filtering
+Usage: 
+<c-table variant="zebra" filterable>
+    <c-table.columns>
+        <c-table.column data-filter-id="status" data-filter-type="dropdown">Status</c-table.column>
+        <c-table.column data-filter-id="salary" data-filter-type="range">Salary</c-table.column>
+    </c-table.columns>
+    ...
+</c-table>
+{% endcomment %}
+
+<div class="{{ class }}" 
+     {% if filterable %}
+     data-table-filter="true"
+     {% endif %}
+     {{ attrs }}>
+    
+    {% if filterable %}
+        <div class="mb-4 space-y-4">
+            <!-- Recherche textuelle -->
+            <div class="flex flex-wrap gap-4 items-center">
+                <div class="relative max-w-sm">
+                    <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                        <c-icon name="search" class="w-4 h-4 text-base-content/50" />
+                    </div>
+                    <input 
+                        type="text"
+                        placeholder="Filtrer les résultats..."
+                        class="input input-bordered input-sm w-full pl-10 pr-10"
+                        data-filter-input="text"
+                    />
+                    <button 
+                        type="button" 
+                        class="absolute inset-y-0 right-3 flex items-center text-base-content/50 hover:text-base-content transition-colors hidden"
+                        data-clear-search
+                    >
+                        <c-icon name="x" class="w-4 h-4" />
+                    </button>
+                </div>
+                
+                <!-- Slot pour filtres personnalisés -->
+                {{ filter_slot }}
+                
+                <!-- Bouton reset -->
+                <c-button variant="ghost" size="sm" data-reset-filters icon="refresh-ccw">
+                    Reset
+                </c-button>
+            </div>
+        </div>
+    {% endif %}
+    
+    <div class="overflow-x-auto">
+        <table class="table table-{{ variant }}">
+            {{ slot }}
+        </table>
+    </div>
+</div>

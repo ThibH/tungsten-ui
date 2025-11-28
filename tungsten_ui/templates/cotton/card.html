@@ -1,0 +1,66 @@
+{% comment %}
+Composant Card avec DaisyUI
+Usage: 
+<c-card>
+    <c-slot name="figure">
+        <img src="image.jpg" alt="Description" />
+    </c-slot>
+    <c-slot name="title">Mon titre</c-slot>
+    <c-slot name="content">Mon contenu</c-slot>
+    <c-slot name="actions">
+        <c-button>Action</c-button>
+    </c-slot>
+</c-card>
+
+Usage avec lien clickable:
+<c-card href="/destination/">
+    <c-slot name="title">Card clickable</c-slot>
+    <c-slot name="content">Cette card est entièrement clickable</c-slot>
+</c-card>
+
+Paramètres:
+- size: xs, sm, md (défaut), lg, xl
+- image_full: true/false - pour image en arrière-plan
+- side: true/false - déplace l'image à côté du contenu
+- bg: classe de couleur de fond (défaut: bg-base-100)
+- href: URL de destination (rend la card clickable avec effet hover)
+- compact: true/false - pour un style plus compact
+{% endcomment %}
+
+<c-vars
+    size="md"
+    bg="base-100"
+/>
+
+{% if href %}
+<a href="{{ href }}" class="block">
+{% endif %}
+    <div class="card shadow-sm bg-{{ bg }} card-{{ size }} {% if side %}card-side{% endif %} border border-base-300 {% if href %}hover:bg-base-200 transition-colors{% endif %} {{ class }}" {{ attrs }}>
+
+        {% if figure %}
+            <figure {% if image_full %}class="image-full"{% endif %}>
+                {{ figure }}
+            </figure>
+        {% endif %}
+
+        <div class="card-body {% if compact %}p-4{% endif %}">
+            {% if title %}
+                <h2 class="card-title">{{ title }}</h2>
+            {% endif %}
+
+            {% if content %}
+                {{ content }}
+            {% else %}
+                {{ slot }}
+            {% endif %}
+
+            {% if actions %}
+                <div class="card-actions justify-end">
+                    {{ actions }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% if href %}
+</a>
+{% endif %}

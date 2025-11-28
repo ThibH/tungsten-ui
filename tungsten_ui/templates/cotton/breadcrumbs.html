@@ -1,0 +1,20 @@
+{% comment %}
+Composant Breadcrumbs principal - Fil d'Ariane
+Usage: 
+<c-breadcrumbs separator="chevron-right">
+    <c-breadcrumb icon="home" label="Accueil" href="/"/>
+    <c-breadcrumb icon="folder" label="Catégorie" href="/category"/>
+    <c-breadcrumb label="Page actuelle"/>
+</c-breadcrumbs>
+
+Paramètres:
+- separator: nom de l'icône pour le séparateur (optionnel, défaut: "chevron-right")
+{% endcomment %}
+
+<div class="breadcrumbs text-sm">
+  <ul>
+    {{ slot }}
+
+
+  </ul>
+</div>

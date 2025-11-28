@@ -1,0 +1,70 @@
+{% comment %}
+Composant Navbar principal inspiré de Flux UI
+Usage:
+<c-navbar>
+    <c-navbar.item href="/" icon="home">Home</c-navbar.item>
+    <c-navbar.item href="/about" icon="info" badge="new">About</c-navbar.item>
+    <c-navbar.submenu label="Services" icon="services">
+        <c-navbar.item href="/web">Web Development</c-navbar.item>
+        <c-navbar.item href="/mobile">Mobile Apps</c-navbar.item>
+    </c-navbar.submenu>
+</c-navbar>
+
+Paramètres:
+- orientation: "horizontal" ou "vertical" (défaut: "horizontal")
+- class: classes CSS supplémentaires
+{% endcomment %}
+
+<c-vars orientation="horizontal" />
+
+{% if orientation == "vertical" %}
+    <nav class="flex flex-col {{ class }}" {{ attrs }}
+         x-data="{
+            activeItem: null,
+            setActive(item) {
+                this.activeItem = item;
+            },
+            init() {
+                this.$nextTick(() => {
+                    const currentPath = window.location.pathname;
+                    const items = this.$el.querySelectorAll('[hx-get], a[href]');
+                    items.forEach(item => {
+                        const hxGet = item.getAttribute('hx-get');
+                        const href = item.getAttribute('href');
+                        if ((hxGet && hxGet === currentPath) || (href && href === currentPath)) {
+                            this.setActive(item);
+                        }
+                    });
+                });
+            }
+         }">
+        {{ slot }}
+    </nav>
+{% else %}
+    <nav class="navbar {{ class }}" {{ attrs }}
+         x-data="{
+            activeItem: null,
+            setActive(item) {
+                this.activeItem = item;
+            },
+            init() {
+                this.$nextTick(() => {
+                    const currentPath = window.location.pathname;
+                    const items = this.$el.querySelectorAll('[hx-get], a[href]');
+                    items.forEach(item => {
+                        const hxGet = item.getAttribute('hx-get');
+                        const href = item.getAttribute('href');
+                        if ((hxGet && hxGet === currentPath) || (href && href === currentPath)) {
+                            this.setActive(item);
+                        }
+                    });
+                });
+            }
+         }">
+        <div class="navbar-start">
+            <div class="flex items-center space-x-2">
+                {{ slot }}
+            </div>
+        </div>
+    </nav>
+{% endif %}

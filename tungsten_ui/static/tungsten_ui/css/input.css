@@ -1,0 +1,463 @@
+@import "tailwindcss";
+
+@plugin "daisyui" {
+    themes: light --default, dark --prefersdark, retro, pastel, abyss, lofi, nord, dracula, wireframe;
+  }
+
+@source "./safelist-tailwindcss.txt";
+
+.htmx-indicator {
+    display: none;
+}
+
+.htmx-request .htmx-indicator {
+    display: inline;
+}
+
+.htmx-request.htmx-indicator {
+    display: inline;
+}
+
+.htmx-request .hide-icon {
+    display: none;
+}
+
+/* Text component styles */
+.text-default {
+  @apply font-normal text-base-content;
+}
+
+.text-strong {
+  @apply font-semibold text-base-content;
+}
+
+.text-subtle {
+  @apply font-normal text-base-content/60;
+}
+
+/* Pagination component styles */
+.pagination-sm .btn {
+  @apply btn-sm;
+}
+
+.pagination-lg .btn {
+  @apply btn-lg;
+}
+
+/* Prism.js syntax highlighting styles - using base layer for better compatibility */
+@layer base {
+    /* Code block styling */
+    pre[class*="language-"] {
+        margin: 0 !important;
+        padding: 1rem !important;
+        border-radius: 0.5rem !important;
+        font-size: 0.875rem !important;
+        line-height: 1.5 !important;
+        overflow-x: auto !important;
+        background: #2d3748 !important;
+    }
+    
+    code[class*="language-"] {
+        color: #e2e8f0 !important;
+    }
+    
+    /* Token styling */
+    .token.tag {
+        color: #f56565 !important;
+    }
+    
+    .token.attr-name {
+        color: #ed8936 !important;
+    }
+    
+    .token.attr-value {
+        color: #68d391 !important;
+    }
+    
+    .token.string {
+        color: #68d391 !important;
+    }
+    
+    .token.comment {
+        color: #a0aec0 !important;
+        font-style: italic !important;
+    }
+    
+    .token.punctuation {
+        color: #cbd5e0 !important;
+    }
+    
+    .token.function {
+        color: #63b3ed !important;
+    }
+    
+    .token.keyword {
+        color: #9f7aea !important;
+    }
+    
+    /* Copy button styling */
+    .copy-to-clipboard-button {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background: rgba(0, 0, 0, 0.5);
+        border: none;
+        border-radius: 0.25rem;
+        color: white;
+        cursor: pointer;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+    
+    .relative:hover .copy-to-clipboard-button {
+        opacity: 1;
+    }
+    
+    .copy-to-clipboard-button:hover {
+        background: rgba(0, 0, 0, 0.7);
+    }
+}
+
+/* Callout component styles */
+.callout {
+  @apply relative border border-solid rounded-lg p-4 mb-4;
+  position: relative;
+}
+
+.callout-close {
+  @apply absolute top-2 right-2 p-1 rounded hover:bg-base-200 text-base-content/60 hover:text-base-content transition-colors;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.callout-content {
+  @apply space-y-3;
+}
+
+.callout-header {
+  @apply flex items-end gap-3;
+}
+
+.callout-icon {
+  @apply flex-shrink-0 w-5 h-5 mt-0.5;
+}
+
+.callout-heading {
+  @apply font-semibold text-base m-0 leading-tight;
+}
+
+.callout-text {
+  @apply text-sm text-base-content/80;
+}
+
+.callout-body {
+  @apply text-sm;
+}
+
+.callout-actions {
+  @apply flex gap-2 mt-3;
+}
+
+.callout-actions-inline {
+  @apply flex-row;
+}
+
+.callout-controls {
+  @apply flex gap-2 mt-3;
+}
+
+/* Callout variants */
+.callout-secondary {
+  @apply bg-base-200/50 border-base-300;
+}
+
+.callout-secondary .callout-icon,
+.callout-secondary .callout-heading {
+  @apply text-base-content;
+}
+
+.callout-success {
+  @apply bg-success/10 border-success/30;
+}
+
+.callout-success .callout-icon,
+.callout-success .callout-heading {
+  @apply text-success;
+}
+
+.callout-warning {
+  @apply bg-warning/10 border-warning/30;
+}
+
+.callout-warning .callout-icon,
+.callout-warning .callout-heading {
+  @apply text-warning;
+}
+
+.callout-danger {
+  @apply bg-error/10 border-error/30;
+}
+
+.callout-danger .callout-icon,
+.callout-danger .callout-heading {
+  @apply text-error;
+}
+
+/* Custom color variants */
+.callout-blue {
+  @apply bg-blue-50 border-blue-200;
+}
+
+.callout-blue .callout-icon,
+.callout-blue .callout-heading {
+  @apply text-blue-700;
+}
+
+.callout-green {
+  @apply bg-green-50 border-green-200;
+}
+
+.callout-green .callout-icon,
+.callout-green .callout-heading {
+  @apply text-green-700;
+}
+
+.callout-purple {
+  @apply bg-purple-50 border-purple-200;
+}
+
+.callout-purple .callout-icon,
+.callout-purple .callout-heading {
+  @apply text-purple-700;
+}
+
+/* 
+ * Tab System - Flux UI Inspired Design
+ * JavaScript handles functionality, CSS provides beautiful Flux-like styling
+ */
+
+/* Tab Group Container */
+.tabs-group {
+  @apply w-full;
+}
+
+/* Hide all radio inputs */
+.tabs-group input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Tab Content Containers - JavaScript will handle visibility */
+.tabs-group .tab-content {
+  @apply py-6;
+}
+
+/* ==========================
+   DEFAULT TABS (Normal with underline)
+   ========================== */
+
+/* Default tabs container */
+.tabs-group .tabs:not(.tabs-segmented):not(.tabs-pill) {
+  @apply flex relative mb-6;
+  border-bottom: 1px solid rgb(229 231 235); /* gray-200 */
+}
+
+/* Default tab items */
+.tabs-group .tabs:not(.tabs-segmented):not(.tabs-pill) .tab {
+  @apply px-4 cursor-pointer transition-all duration-200;
+  @apply flex items-center gap-2 text-gray-600 font-medium;
+  @apply hover:text-gray-900 relative;
+  padding-bottom: 16px;
+}
+
+/* Active state for default tabs - no border-bottom to avoid double line */
+.tabs-group .tabs:not(.tabs-segmented):not(.tabs-pill) input[type="radio"]:checked + .tab {
+  @apply text-gray-900;
+}
+
+/* Animated underline bar */
+.tabs-group .tabs:not(.tabs-segmented):not(.tabs-pill)::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: var(--underline-left, 0px);
+  width: var(--underline-width, 0px);
+  height: 2px;
+  background-color: rgb(17 24 39); /* gray-900 */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 1px 1px 0 0;
+}
+
+/* ==========================
+   SEGMENTED TABS
+   ========================== */
+
+/* Segmented tabs container */
+.tabs-group .tabs.tabs-segmented {
+  @apply flex bg-gray-100 p-1 rounded-lg mb-6 gap-1;
+}
+
+/* Segmented tab items */
+.tabs-group .tabs.tabs-segmented .tab {
+  @apply px-4 py-2 cursor-pointer transition-all duration-200;
+  @apply flex items-center gap-2 text-gray-600 font-medium;
+  @apply hover:text-gray-900 rounded-md flex-1 justify-center;
+}
+
+/* Active state for segmented tabs */
+.tabs-group .tabs.tabs-segmented input[type="radio"]:checked + .tab {
+  @apply bg-white text-gray-900 shadow-sm;
+}
+
+/* ==========================
+   PILL TABS
+   ========================== */
+
+/* Pill tabs container */
+.tabs-group .tabs.tabs-pill {
+  @apply flex mb-6 gap-2;
+}
+
+/* Pill tab items */
+.tabs-group .tabs.tabs-pill .tab {
+  @apply px-4 py-2 cursor-pointer transition-all duration-200;
+  @apply flex items-center gap-2 text-gray-600 font-medium;
+  @apply hover:text-gray-900 hover:bg-gray-100 rounded-full;
+}
+
+/* Active state for pill tabs */
+.tabs-group .tabs.tabs-pill input[type="radio"]:checked + .tab {
+  @apply bg-gray-900 text-white hover:bg-gray-800 hover:text-white;
+}
+
+/* ==========================
+   SIZE VARIANTS
+   ========================== */
+
+/* Small size variant */
+.tabs-group .tabs.tabs-sm .tab {
+  @apply px-3 py-2 text-sm;
+}
+
+.tabs-group .tabs.tabs-sm:not(.tabs-segmented):not(.tabs-pill) .tab {
+  @apply px-3 py-2;
+}
+
+/* Large size variant */
+.tabs-group .tabs.tabs-lg .tab {
+  @apply px-6 py-4 text-lg;
+}
+
+.tabs-group .tabs.tabs-lg:not(.tabs-segmented):not(.tabs-pill) .tab {
+  @apply px-6 py-4;
+}
+
+/* Override --tab-height for large tabs - placed after all other rules for higher specificity */
+.tabs-lg {
+  --tab-height: calc(var(--size-field, 0.25rem) * 14) !important;
+}
+
+/* ==========================
+   VERTICAL ORIENTATION
+   ========================== */
+
+/* Vertical tabs container - applies to all variants */
+.tabs-group .tabs.tabs-vertical {
+  @apply flex-col w-fit;
+}
+
+/* Default vertical tabs */
+.tabs-group .tabs.tabs-vertical:not(.tabs-segmented):not(.tabs-pill) {
+  border-bottom: none;
+  border-right: 1px solid rgb(229 231 235); /* gray-200 */
+  @apply mb-0 mr-6;
+}
+
+.tabs-group .tabs.tabs-vertical:not(.tabs-segmented):not(.tabs-pill) .tab {
+  @apply w-full justify-start text-left;
+  padding-right: 16px;
+  padding-bottom: 12px;
+}
+
+/* Animated side bar for vertical default tabs */
+.tabs-group .tabs.tabs-vertical:not(.tabs-segmented):not(.tabs-pill)::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: var(--underline-top, 0px);
+  width: 2px;
+  height: var(--underline-height, 0px);
+  background-color: rgb(17 24 39); /* gray-900 */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 1px 0 0 1px;
+}
+
+/* Vertical segmented tabs */
+.tabs-group .tabs.tabs-vertical.tabs-segmented {
+  @apply flex-col p-1 w-fit;
+}
+
+/* Vertical pill tabs */
+.tabs-group .tabs.tabs-vertical.tabs-pill {
+  @apply flex-col gap-2 w-fit;
+}
+
+/* Vertical tabs without group wrapper */
+.tabs.tabs-vertical:not(.tabs-segmented):not(.tabs-pill) .tab {
+  @apply w-full justify-start text-left;
+}
+
+.tabs.tabs-vertical.tabs-segmented .tab {
+  @apply w-full justify-start text-left;
+}
+
+.tabs.tabs-vertical.tabs-pill .tab {
+  @apply w-full justify-start text-left;
+}
+
+/* Button Group - auto-apply join-item styles to .btn children */
+.join > .btn {
+  border-start-start-radius: var(--join-ss, 0);
+  border-start-end-radius: var(--join-se, 0);
+  border-end-end-radius: var(--join-ee, 0);
+  border-end-start-radius: var(--join-es, 0);
+}
+
+.join > .btn:where(:not(:first-child, :disabled, [disabled], .btn-disabled)) {
+  margin-inline-start: calc(var(--border, 1px) * -1);
+}
+
+.join > .btn:first-child {
+  --join-ss: var(--radius-field);
+  --join-es: var(--radius-field);
+}
+
+.join > .btn:last-child {
+  --join-se: var(--radius-field);
+  --join-ee: var(--radius-field);
+}
+
+.join > .btn:only-child {
+  --join-ss: var(--radius-field);
+  --join-se: var(--radius-field);
+  --join-es: var(--radius-field);
+  --join-ee: var(--radius-field);
+}
+
+/* Navbar responsive styles */
+.navbar-hamburger {
+  @apply block lg:hidden;
+}
+
+.navbar-nav-desktop {
+  @apply hidden lg:flex lg:items-center lg:gap-2;
+}
+
+.navbar-logo-wrapper {
+  @apply flex items-center;
+}

@@ -1,0 +1,116 @@
+<c-vars
+    field=""
+    type="text"
+    placeholder=""
+    label=""
+    description=""
+    icon=""
+    icon_trailing=""
+    text=""
+    text_trailing=""
+    size="md"
+    variant="default"
+    name=""
+    value=""
+/>
+
+<!-- Input container with label -->
+<div class="flex flex-col gap-2 {% if field.errors or invalid == 'true' %}input-group-error{% endif %}">
+    {% if label %}
+        <label class="label" for="{{ input_id }}">
+            <c-text variant="strong" size="sm" class="label-text">{{ label }}</c-text>
+        </label>
+    {% endif %}
+    
+    <!-- Input wrapper -->
+    <div class="relative">
+        <div class="input input-bordered 
+            {% if size == 'sm' %}input-sm{% elif size == 'lg' %}input-lg{% elif size == 'xs' %}input-xs{% endif %}
+            {% if variant == 'primary' %}input-primary{% elif variant == 'secondary' %}input-secondary{% elif variant == 'accent' %}input-accent{% elif variant == 'info' %}input-info{% elif variant == 'success' %}input-success{% elif variant == 'warning' %}input-warning{% elif variant == 'error' %}input-error{% endif %}
+            {% if disabled == 'true' %}input-disabled{% endif %}
+            {% if field.errors or invalid == 'true' %}input-error border-error{% endif %}
+            {% if icon or text %}pl-10{% endif %}
+            {% if icon_trailing or text_trailing or clearable == 'true' %}pr-10{% endif %}
+            focus-within:outline-none focus-within:ring-2 focus-within:ring-primary/20
+        " {{ attrs }}>
+            
+            <!-- Leading icon -->
+            {% if icon %}
+                <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                    <c-icon name="{{ icon }}" class="w-4 h-4 text-base-content/50" />
+                </div>
+            {% endif %}
+
+            <!-- Leading text -->
+            {% if text %}
+                <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                    <c-text variant="subtle" size="sm" class="text-base-content/70">{{ text }}</c-text>
+                </div>
+            {% endif %}
+            
+            <!-- Input element -->
+            <input 
+                class="w-full bg-transparent border-none outline-none
+                    {% if icon_trailing or text_trailing or clearable == 'true' %}pr-6{% endif %} {{ class }}
+                "
+                id="{{ input_id }}"
+                {% if name %}name="{{ name }}"{% elif field %}name="{{ field.name }}"{% endif %}
+                type="{{ type }}"
+                {% if value %}value="{{ value }}"{% elif field %}value="{{ field.value|default:'' }}"{% endif %}
+                {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+                {% if disabled == 'true' %}disabled{% endif %}
+                {% if readonly == 'true' %}readonly{% endif %}
+                {% if required == 'true' or field.field.required %}required{% endif %}
+                {{ attrs }}
+            />
+            
+            <!-- Trailing icon -->
+            {% if icon_trailing %}
+                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                    <c-icon name="{{ icon_trailing }}" class="w-4 h-4 text-base-content/50" />
+                </div>
+            {% endif %}
+            
+            <!-- Trailing text -->
+            {% if text_trailing %}
+                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                    <c-text variant="subtle" size="sm" class="text-base-content/70">{{ text_trailing }}</c-text>
+                </div>
+            {% endif %}
+            
+            <!-- Clear button -->
+            {% if clearable %}
+                <button 
+                    type="button" 
+                    class="absolute inset-y-0 right-3 flex items-center text-base-content/50 hover:text-base-content"
+                    onclick="this.previousElementSibling.value = ''; this.previousElementSibling.focus();this.previousElementSibling.dispatchEvent(new Event('input'));"
+                >
+                    <c-icon name="x" class="w-4 h-4" />
+                </button>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Description -->
+    {% if description %}
+        <div class="label">
+            <c-text variant="subtle" size="sm" class="label-text-alt">{{ description }}</c-text>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Error messages -->
+{% if field.errors %}
+    <div class="label">
+        <c-text variant="subtle" color="error" class="label-text-alt">
+            {% for error in field.errors %}
+                {{ error }}{% if not forloop.last %}<br>{% endif %}
+            {% endfor %}
+        </c-text>
+    </div>
+{% endif %}
+
+<!-- Validator hint -->
+{% if validator_hint %}
+    <div class="validator-hint hidden">{{ validator_hint }}</div>
+{% endif %}

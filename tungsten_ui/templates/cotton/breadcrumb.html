@@ -1,0 +1,28 @@
+{% comment %}
+Composant Breadcrumb individuel
+Usage: 
+<c-breadcrumb icon="home" label="Accueil" href="/"/>
+<c-breadcrumb icon="folder" label="Catégorie" href="/category"/>
+<c-breadcrumb label="Page actuelle"/> <!-- sans href = page actuelle -->
+
+Paramètres:
+- icon: nom de l'icône (optionnel)
+- label: texte du breadcrumb (requis)
+- href: lien (optionnel, si absent = page actuelle)
+{% endcomment %}
+
+<li>
+    {% if href %}
+        <a href="{{ href }}">
+            {% if icon %}
+                <c-icon name="{{ icon }}" />
+            {% endif %}
+            {{ label }}
+        </a>
+    {% else %}
+        {% if icon %}
+            <c-icon name="{{ icon }}" />
+        {% endif %}
+        {{ label }}
+    {% endif %}
+</li>

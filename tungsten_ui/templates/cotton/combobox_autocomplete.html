@@ -1,0 +1,41 @@
+{% comment %}
+Combobox component with autocomplete
+Usage: <c-combobox-autocomplete :options="[('value1', 'Label 1'), ('value2', 'Label 2')]" />
+       <c-combobox-autocomplete :options=options label="Choose an option" />
+{% endcomment %}
+
+<c-vars size="md" :disabled=False />
+
+<div class="form-control" data-combobox-autocomplete>
+    {% if label %}
+        <label class="label">
+            <span class="label-text">{{ label }}</span>
+        </label>
+    {% endif %}
+    
+    <div class="relative">
+        <input type="text" 
+               class="input input-bordered w-full {% if size != 'md' %}input-{{ size }}{% endif %} {% if disabled %}input-disabled{% endif %} {{ class }}"
+               placeholder="{{ placeholder|default:'Type to search...' }}"
+               {% if disabled %}disabled{% endif %}
+               autocomplete="off"
+               {{ attrs }} />
+        
+        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+            <c-icon name="chevron-down" class="w-4 h-4 text-base-content/50" />
+        </div>
+        
+        <ul class="absolute z-50 w-full mt-1 bg-base-100 border border-base-300 rounded-lg shadow-lg max-h-60 overflow-auto hidden"
+            data-options-list>
+            {% for option in options %}
+                <li class="px-3 py-2 hover:bg-base-200 cursor-pointer border-b border-base-200 last:border-b-0"
+                    data-value="{{ option.0 }}" 
+                    data-text="{{ option.1 }}">
+                    {{ option.1 }}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <input type="hidden" name="{{ name }}" data-hidden-input />
+</div>

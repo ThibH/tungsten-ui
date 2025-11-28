@@ -1,0 +1,35 @@
+{% comment %}
+Composant Chip wrapper avec DaisyUI Indicator et support tooltip
+Usage: 
+<c-chip text="5" position="top-right" variant="primary">
+    <button class="btn">Mon bouton</button>
+</c-chip>
+{% endcomment %}
+
+<c-vars
+    position="top-right"
+    variant="primary"
+    size="md"
+    tooltip=""
+    tooltip_position="top"
+    tooltip_variant=""
+/>
+
+<div class="indicator
+            {% if tooltip %}tooltip tooltip-{{ tooltip_position }}{% if tooltip_variant %} tooltip-{{ tooltip_variant }}{% endif %}{% endif %}"
+     {% if tooltip %}data-tip="{{ tooltip }}"{% endif %}>
+
+    <span class="indicator-item badge badge-{{ variant }} badge-{{ size }} border-0
+                 {% if position == 'top-left' %}indicator-start indicator-top{% endif %}
+                 {% if position == 'top-right' %}indicator-end indicator-top{% endif %}
+                 {% if position == 'bottom-left' %}indicator-start indicator-bottom{% endif %}
+                 {% if position == 'bottom-right' %}indicator-end indicator-bottom{% endif %}
+                 {{ class }}">
+        {% if icon %}
+            <c-icon name="{{ icon }}" size="xs"></c-icon>
+        {% endif %}
+        {{ text }}
+    </span>
+
+    {{ slot }}
+</div>

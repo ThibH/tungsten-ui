@@ -1,0 +1,39 @@
+{% comment %}
+Composant Button basique avec DaisyUI
+Usage: <c-button>Mon bouton</c-button>
+       <c-button href="/path">Lien stylisé comme bouton</c-button>
+       <c-button icon_trailing="arrow-right">Icône à droite</c-button>
+       <c-button icon="plus">Bouton avec icône (devient carré si pas de texte)</c-button>
+       <c-button icon="plus" circle>Bouton circulaire avec icône</c-button>
+{% endcomment %}
+
+<c-vars variant="default" :icon=None :block=False />
+
+{% if href %}
+    <a x-data href="{{ href }}" class="btn {% if variant != 'default' %}btn-{{ variant }}{% endif %} {% if size %}btn-{{ size }}{% endif %} {% if block %}btn-block{% endif %} {% if circle %}btn-circle{% elif icon and not slot %}btn-square{% endif %} {% if icon_trailing %}flex-row-reverse{% endif %} {{ class }}" {{ attrs }}>
+{% else %}
+    <button x-data class="btn {% if variant != 'default' %}btn-{{ variant }}{% endif %} {% if size %}btn-{{ size }}{% endif %} {% if block %}btn-block{% endif %} {% if circle %}btn-circle{% elif icon and not slot %}btn-square{% endif %} {% if icon_trailing %}flex-row-reverse{% endif %} {{ class }}" {{ attrs }}
+            {% if modal %}
+                @click="{{ modal }}.showModal()"
+            {% endif %}
+    >
+{% endif %}
+    {% if spinner_icon %}
+        <c-icon name='{{ spinner_icon }}' class="animate-spin htmx-indicator" />
+    {% elif spinner %}
+        <span class="loading loading-spinner htmx-indicator"></span>
+    {% endif %}
+    {% if icon %}
+        <c-icon name='{{ icon }}' class="hide-icon" />
+    {% endif %}
+    {% if icon_trailing %}
+        <c-icon name='{{ icon_trailing }}' class="hide-icon" />
+    {% endif %}
+    {% if slot %}
+        {{ slot }}
+    {% endif %}
+{% if href %}
+    </a>
+{% else %}
+    </button>
+{% endif %}
