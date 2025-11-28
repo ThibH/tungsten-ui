@@ -95,4 +95,4 @@ MIT License
 
 ---
 
-**Tungsten UI - Built with Django, Cotton, Tailwind CSS, DaisyUI, HTMX, and Alpine.js**
+**Tungsten UI - Built with Django-cotton, Tailwind CSS, DaisyUI, HTMX, and Alpine.js**
