@@ -1,4 +1,13 @@
 {% load static %}
+<!-- Tungsten UI - Scripts -->
 
-<!-- Tungsten UI Scripts -->
+<!-- Core dependencies -->
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+<script src="{% static 'tungsten_ui/js/lucide-loader.js' %}"></script>
 <script src="{% static 'tungsten_ui/js/components.js' %}"></script>
+
+{% if htmx %}
+<!-- HTMX and handlers -->
+<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"></script>
+<script src="{% static 'tungsten_ui/js/htmx-handlers.js' %}"></script>
+{% endif %}

@@ -8,7 +8,7 @@
         <title>{{ title }}</title>
 
         {% load static %}
-        {% include "init-components.html" %}
+        {% include "init.html" %}
 
         {{ extra_head }}
 
@@ -30,6 +30,6 @@
     </body>
 
 
-    {% include "init-scripts.html" %}
+    {% include "init-scripts.html" with htmx=True %}
 
 </html>

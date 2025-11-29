@@ -34,15 +34,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// HTMX utilities
-document.addEventListener('htmx:configRequest', (event) => {
-    // Add CSRF token automatically
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
-    if (csrfToken) {
-        event.detail.headers['X-CSRFToken'] = csrfToken.value;
-    }
-});
-
 // Theme controller setup after DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     setupThemeControllers();
@@ -1794,11 +1785,3 @@ function handleThemeChange(e) {
     }
 }
 
-// Reinitialize components after HTMX swap
-document.addEventListener('htmx:afterSwap', function(event) {
-    // Wait for DOM to be fully updated
-    setTimeout(() => {
-        initializeComponents();
-        setupThemeControllers(); // Re-setup theme controllers after HTMX swap
-    }, 100);
-});
