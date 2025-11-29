@@ -7,7 +7,7 @@ Usage: <c-button>Mon bouton</c-button>
        <c-button icon="plus" circle>Bouton circulaire avec icône</c-button>
 {% endcomment %}
 
-<c-vars variant="default" :icon=None :block=False />
+<c-vars variant="default" :icon=None :block=False label="" />
 
 {% if href %}
     <a x-data href="{{ href }}" class="btn {% if variant != 'default' %}btn-{{ variant }}{% endif %} {% if size %}btn-{{ size }}{% endif %} {% if block %}btn-block{% endif %} {% if circle %}btn-circle{% elif icon and not slot %}btn-square{% endif %} {% if icon_trailing %}flex-row-reverse{% endif %} {{ class }}" {{ attrs }}>
@@ -29,8 +29,8 @@ Usage: <c-button>Mon bouton</c-button>
     {% if icon_trailing %}
         <c-icon name='{{ icon_trailing }}' class="hide-icon" />
     {% endif %}
-    {% if slot %}
-        {{ slot }}
+    {% if slot or label %}
+        <span>{{ slot|default:label }}</span>
     {% endif %}
 {% if href %}
     </a>
