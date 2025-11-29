@@ -1,3 +1,8 @@
-<div class="container mx-auto px-4 {{ class }}" {{ attrs }}>
+{% comment %}
+Composant Container avec DaisyUI
+Usage: <c-container>Contenu</c-container>
+{% endcomment %}
+
+<div class="container mx-auto px-4 {% if centered %}flex justify-center items-center min-h-screen{% endif %} {{ class }}" {{ attrs }}>
     {{ slot }}
 </div>
