@@ -27,7 +27,6 @@ async function loadLucide() {
             }
             
             lucideData = await response.json();
-            console.log('Lucide chargé:', Object.keys(lucideData).length, 'icônes');
         } catch (error) {
             console.error('Erreur lors du chargement de lucide:', error);
             lucideData = {};
@@ -50,14 +49,11 @@ window.getLucideIcon = async function(name) {
 
 // Fonction pour initialiser toutes les icônes lucide dans la page
 window.initLucideIcons = async function() {
-    console.log('Initialisation des icônes Lucide...');
     const lucideIcons = document.querySelectorAll('[data-lucide]');
-    console.log('Trouvé', lucideIcons.length, 'éléments avec data-lucide');
     
     for (const element of lucideIcons) {
         const name = element.getAttribute('data-lucide');
         
-        console.log(`Chargement icône: ${name}`);
         const svg = await getLucideIcon(name);
         if (svg) {
             // Créer un élément SVG temporaire pour le parser
@@ -75,7 +71,6 @@ window.initLucideIcons = async function() {
                 // Remplacer le contenu du conteneur par le SVG
                 element.innerHTML = '';
                 element.appendChild(svgElement);
-                console.log(`Icône ${name} injectée avec succès`);
             }
         } else {
             console.warn(`Impossible de charger l'icône ${name}`);
