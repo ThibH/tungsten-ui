@@ -4,7 +4,33 @@
     themes: light --default, dark --prefersdark, retro, pastel, abyss, lofi, nord, dracula, wireframe;
   }
 
-@source "./safelist-tailwindcss.txt";
+/* ===========================================
+   SAFELIST - Classes générées dynamiquement
+   =========================================== */
+
+/* Button variants (DaisyUI) */
+@source inline("btn-{primary,secondary,accent,neutral,info,success,warning,error,ghost,link,outline}");
+@source inline("btn-{xs,sm,md,lg}");
+@source inline("btn-{block,square,circle}");
+
+/* Alert variants (DaisyUI) */
+@source inline("alert-{info,success,warning,error}");
+
+/* Card sizes */
+@source inline("card-{xs,sm,md,lg,xl}");
+
+/* Text sizes */
+@source inline("text-{xs,sm,md,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl,8xl,9xl}");
+
+/* Icon/element sizes */
+@source inline("size-{4,6,8,10,12,16}");
+@source inline("!size-16");
+
+/* Avatar group spacing */
+@source inline("-space-x-{1,2,3,4,5,6,7,8}");
+
+/* Tab states */
+@source inline("tab-{active,disabled}");
 
 .htmx-indicator {
     display: none;
