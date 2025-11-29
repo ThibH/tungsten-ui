@@ -8,14 +8,14 @@ direction: Sort direction (asc/desc)
 sort_key: Data attribute key for sorting
 {% endcomment %}
 
-<th class="{% if align == 'center' %}text-center{% elif align == 'right' %}text-right{% else %}text-left{% endif %} {{ class }}" 
+<th class="{{ class }}"
     {{ attrs }}
     {% if sortable %}data-sortable="true"{% endif %}
     {% if sort_key %}data-sort-key="{{ sort_key }}"{% endif %}
     {% if sorted %}data-sorted="{{ direction }}"{% endif %}>
-    
+
     {% if sortable %}
-        <div class="flex items-center gap-2 cursor-pointer hover:text-base-content/80 transition-colors" 
+        <div class="flex items-center gap-2 cursor-pointer hover:text-base-content/80 transition-colors {% if align == 'center' %}justify-center{% elif align == 'right' %}justify-end{% endif %}"
              onclick="sortTable(this)">
             {{ slot }}
             {% if sorted %}
@@ -29,7 +29,7 @@ sort_key: Data attribute key for sorting
             {% endif %}
         </div>
     {% else %}
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 {% if align == 'center' %}justify-center{% elif align == 'right' %}justify-end{% endif %}">
             {{ slot }}
             {% if sorted %}
                 {% if direction == "desc" %}
