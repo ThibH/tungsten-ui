@@ -1,6 +1,20 @@
 {% comment %}
 Composant Badge avec DaisyUI
 Usage: <c-badge variant="primary">Mon badge</c-badge>
+       <c-badge variant="error" soft>Badge soft</c-badge>
+       <c-badge variant="warning" outline>Badge outline</c-badge>
+       <c-badge variant="info" dash>Badge dash</c-badge>
+       <c-badge variant="success" ghost>Badge ghost</c-badge>
+       <c-badge icon="star" size="lg">Badge avec icône</c-badge>
+       <c-badge color="#ff5500">Badge couleur custom</c-badge>
+       <c-badge color="#ff5500" outline>Badge outline custom</c-badge>
+
+Tailles d'icônes automatiques:
+- xs → size-2.5 (10px)
+- sm → size-3 (12px)
+- md (défaut) → size-3.5 (14px)
+- lg → size-4 (16px)
+- xl → size-5 (20px)
 {% endcomment %}
 
 <c-vars
@@ -9,14 +23,22 @@ Usage: <c-badge variant="primary">Mon badge</c-badge>
 />
 
 <span class="badge
-             badge-{{ size }}
-             badge-{{ variant }}
-             {{ class }}" {{ attrs }}>
+             {% if not color %}badge-{{ variant }}{% endif %}
+             {% if soft %}badge-soft{% endif %}
+             {% if outline %}badge-outline{% endif %}
+             {% if dash %}badge-dash{% endif %}
+             {% if ghost %}badge-ghost{% endif %}
+             {% if size != 'md' %}badge-{{ size }}{% endif %}
+             {{ class }}"
+      {% if color %}
+      style="--badge-color: {{ color }}; --badge-fg: white; background-color: {{ color }}; border-color: {{ color }}; color: white;{% if outline or dash %} background-color: transparent; color: {{ color }};{% endif %}"
+      {% endif %}
+      {{ attrs }}>
     {% if icon %}
-        <c-icon name="{{ icon }}" class="w-3 h-3 mr-1"></c-icon>
+        <c-icon name="{{ icon }}" class="{% if size == 'xs' %}size-2.5{% elif size == 'sm' %}size-3{% elif size == 'lg' %}size-4{% elif size == 'xl' %}size-5{% else %}size-3.5{% endif %}"></c-icon>
     {% endif %}
     {{ slot }}
     {% if icon_trailing %}
-        <c-icon name="{{ icon_trailing }}" class="w-3 h-3 ml-1"></c-icon>
+        <c-icon name="{{ icon_trailing }}" class="{% if size == 'xs' %}size-2.5{% elif size == 'sm' %}size-3{% elif size == 'lg' %}size-4{% elif size == 'xl' %}size-5{% else %}size-3.5{% endif %}"></c-icon>
     {% endif %}
 </span>

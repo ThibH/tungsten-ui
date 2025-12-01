@@ -5,29 +5,38 @@ Usage: <c-button>Mon bouton</c-button>
        <c-button icon_trailing="arrow-right">Icône à droite</c-button>
        <c-button icon="plus">Bouton avec icône (devient carré si pas de texte)</c-button>
        <c-button icon="plus" circle>Bouton circulaire avec icône</c-button>
+       <c-button variant="error" soft>Bouton soft</c-button>
+       <c-button variant="primary" outline>Bouton outline</c-button>
+       <c-button variant="warning" dash>Bouton dash</c-button>
+
+Tailles d'icônes automatiques:
+- xs → size-3 (12px)
+- sm → size-4 (16px)
+- md (défaut) → size-5 (20px)
+- lg → size-6 (24px)
 {% endcomment %}
 
 <c-vars variant="default" :icon=None :block=False label="" />
 
 {% if href %}
-    <a x-data href="{{ href }}" class="btn {% if variant != 'default' %}btn-{{ variant }}{% endif %} {% if size %}btn-{{ size }}{% endif %} {% if block %}btn-block{% endif %} {% if circle %}btn-circle{% elif icon and not slot %}btn-square{% endif %} {% if icon_trailing %}flex-row-reverse{% endif %} {{ class }}" {{ attrs }}>
+    <a x-data href="{{ href }}" class="btn {% if variant != 'default' %}btn-{{ variant }}{% endif %} {% if soft %}btn-soft{% endif %} {% if outline %}btn-outline{% endif %} {% if dash %}btn-dash{% endif %} {% if size %}btn-{{ size }}{% endif %} {% if block %}btn-block{% endif %} {% if circle %}btn-circle{% elif icon and not slot %}btn-square{% endif %} {% if icon_trailing %}flex-row-reverse{% endif %} {{ class }}" {{ attrs }}>
 {% else %}
-    <button x-data class="btn {% if variant != 'default' %}btn-{{ variant }}{% endif %} {% if size %}btn-{{ size }}{% endif %} {% if block %}btn-block{% endif %} {% if circle %}btn-circle{% elif icon and not slot %}btn-square{% endif %} {% if icon_trailing %}flex-row-reverse{% endif %} {{ class }}" {{ attrs }}
+    <button x-data class="btn {% if variant != 'default' %}btn-{{ variant }}{% endif %} {% if soft %}btn-soft{% endif %} {% if outline %}btn-outline{% endif %} {% if dash %}btn-dash{% endif %} {% if size %}btn-{{ size }}{% endif %} {% if block %}btn-block{% endif %} {% if circle %}btn-circle{% elif icon and not slot %}btn-square{% endif %} {% if icon_trailing %}flex-row-reverse{% endif %} {{ class }}" {{ attrs }}
             {% if modal %}
                 @click="{{ modal }}.showModal()"
             {% endif %}
     >
 {% endif %}
     {% if spinner_icon %}
-        <c-icon name='{{ spinner_icon }}' class="animate-spin htmx-indicator" />
+        <c-icon name='{{ spinner_icon }}' class="animate-spin htmx-indicator {% if size == 'xs' %}size-3{% elif size == 'sm' %}size-4{% elif size == 'lg' %}size-6{% else %}size-5{% endif %}" />
     {% elif spinner %}
         <span class="loading loading-spinner htmx-indicator"></span>
     {% endif %}
     {% if icon %}
-        <c-icon name='{{ icon }}' class="hide-icon" />
+        <c-icon name='{{ icon }}' class="hide-icon {% if size == 'xs' %}size-3{% elif size == 'sm' %}size-4{% elif size == 'lg' %}size-6{% else %}size-5{% endif %}" />
     {% endif %}
     {% if icon_trailing %}
-        <c-icon name='{{ icon_trailing }}' class="hide-icon" />
+        <c-icon name='{{ icon_trailing }}' class="hide-icon {% if size == 'xs' %}size-3{% elif size == 'sm' %}size-4{% elif size == 'lg' %}size-6{% else %}size-5{% endif %}" />
     {% endif %}
     {% if slot or label %}
         <span>{{ slot|default:label }}</span>
