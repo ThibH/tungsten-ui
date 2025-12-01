@@ -4,7 +4,7 @@ Usage: <c-combobox :options=[('value1', 'Label 1'), ('value2', 'Label 2')] />
        <c-combobox :options=options label="Choose an option" />
 {% endcomment %}
 
-<c-vars size="md" :disabled=False />
+<c-vars size="md" value="" :disabled=False />
 
 <div class="form-control">
     {% if label %}
@@ -17,9 +17,9 @@ Usage: <c-combobox :options=[('value1', 'Label 1'), ('value2', 'Label 2')] />
             class="select select-bordered {% if size != 'md' %}select-{{ size }}{% endif %} {% if disabled %}select-disabled{% endif %} {{ class }}"
             {% if disabled %}disabled{% endif %}
             {{ attrs }}>
-        <option value="">{{ placeholder|default:"--Select an option--" }}</option>
+        <option value="" {% if not value %}selected{% endif %}>{{ placeholder|default:"--Select an option--" }}</option>
         {% for option in options %}
-            <option value="{{ option.0 }}">{{ option.1 }}</option>
+            <option value="{{ option.0 }}" {% if option.0|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>{{ option.1 }}</option>
         {% endfor %}
     </select>
 </div>

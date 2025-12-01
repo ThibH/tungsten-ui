@@ -1,0 +1,90 @@
+{% comment %}
+Combobox Multi-Select component with autocomplete
+Usage: <c-combobox-multi-autocomplete name="tags" :options="[('1', 'Tag 1'), ('2', 'Tag 2')]" />
+       <c-combobox-multi-autocomplete name="categories" :options=categories :value=selected label="Categories" />
+       <c-combobox-multi-autocomplete name="items" :options=items max="5" badge_variant="primary" />
+
+Props:
+- name: Form field name (required)
+- options: List of tuples (value, label)
+- value: List of pre-selected values
+- label: Field label
+- placeholder: Placeholder text for search input
+- size: Input size (sm, md, lg)
+- disabled: Disable the component
+- max: Maximum number of selections
+- badge_variant: Variant for selected badges (default: neutral)
+- badge_size: Size for badges (default: sm)
+{% endcomment %}
+
+<c-vars size="md" badge_variant="neutral" badge_size="sm" :disabled=False />
+
+<div class="form-control"
+     data-combobox-multi
+     data-name="{{ name }}"
+     data-placeholder="{{ placeholder|default:'Type to search...' }}"
+     data-badge-variant="{{ badge_variant }}"
+     data-badge-size="{{ badge_size }}"
+     {% if max %}data-max="{{ max }}"{% endif %}>
+
+    {% if label %}
+        <label class="label">
+            <span class="label-text">{{ label }}</span>
+        </label>
+    {% endif %}
+
+    <div class="relative" data-dropdown-area>
+        <!-- Search input -->
+        <input type="text"
+               class="input input-bordered w-full {% if size != 'md' %}input-{{ size }}{% endif %} {% if disabled %}input-disabled{% endif %} {{ class }}"
+               placeholder="{{ placeholder|default:'Type to search...' }}"
+               {% if disabled %}disabled{% endif %}
+               autocomplete="off"
+               data-multi-input
+               {{ attrs }} />
+
+        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+            <c-icon name="search" class="w-4 h-4 text-base-content/50" />
+        </div>
+
+        <!-- Dropdown options list -->
+        <ul class="absolute z-[9999] w-full mt-1 bg-base-100 border border-base-300 rounded-lg shadow-lg max-h-60 overflow-auto hidden"
+            data-options-list>
+            {% for option in options %}
+                <li class="px-3 py-2 hover:bg-base-200 cursor-pointer border-b border-base-200 last:border-b-0 flex items-center gap-2"
+                    data-value="{{ option.0 }}"
+                    data-text="{{ option.1 }}">
+                    <span class="w-4 h-4 shrink-0 opacity-0 transition-opacity" data-check-icon>
+                        <c-icon name="check" class="w-4 h-4" />
+                    </span>
+                    <span>{{ option.1 }}</span>
+                </li>
+            {% empty %}
+                <li class="px-3 py-2 text-base-content/50">No options available</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Selected badges container -->
+    <div class="flex flex-wrap gap-2 mt-2 empty:mt-0" data-badges-container>
+        {% for val in value %}
+            {% for option in options %}
+                {% if option.0|stringformat:"s" == val|stringformat:"s" %}
+                    <span class="badge badge-{{ badge_variant }} {% if badge_size != 'md' %}badge-{{ badge_size }}{% endif %} gap-1" data-badge-value="{{ option.0 }}">
+                        {{ option.1 }}
+                        <button type="button" class="hover:text-error cursor-pointer" data-remove-badge>
+                            <c-icon name="x" class="{% if badge_size == 'xs' %}size-2.5{% elif badge_size == 'sm' %}size-3{% elif badge_size == 'lg' %}size-4{% else %}size-3.5{% endif %}" />
+                        </button>
+                    </span>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    </div>
+
+    <!-- Hidden inputs container for form submission -->
+    <div data-hidden-inputs>
+        {% for val in value %}
+            <input type="hidden" name="{{ name }}" value="{{ val }}">
+        {% endfor %}
+    </div>
+</div>

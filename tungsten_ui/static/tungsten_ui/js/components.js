@@ -436,16 +436,23 @@ class TableFilter {
     initDropdownFilter(dropdown) {
         const filterId = dropdown.dataset.filterDropdown;
         const config = this.filterConfig[filterId];
-        
+
         if (!config) return;
-        
+
+        // Skip if already initialized (prevents duplicates on HTMX re-init)
+        if (dropdown.dataset.filterInitialized === 'true') return;
+        dropdown.dataset.filterInitialized = 'true';
+
         const toggle = dropdown.querySelector('[data-dropdown-toggle]');
         const optionsContainer = dropdown.querySelector('[data-options-container]');
         const noOptionsText = dropdown.querySelector('[data-no-options]');
         const clearSection = dropdown.querySelector('[data-clear-section]');
         const clearButton = dropdown.querySelector('[data-clear-filter]');
         const countBadge = dropdown.querySelector('[data-filter-count]');
-        
+
+        // Clear existing options before populating
+        optionsContainer.innerHTML = '';
+
         // Populate options
         if (config.options.length === 0) {
             noOptionsText.classList.remove('hidden');
@@ -460,21 +467,21 @@ class TableFilter {
                     </label>
                 `;
                 optionsContainer.appendChild(wrapper);
-                
+
                 const checkbox = wrapper.querySelector('input[type="checkbox"]');
                 checkbox.addEventListener('change', () => {
                     this.updateDropdownFilter(filterId);
                 });
             });
         }
-        
+
         // Clear button
         if (clearButton) {
             clearButton.addEventListener('click', () => {
                 this.clearDropdownFilter(filterId);
             });
         }
-        
+
         // Toggle dropdown - find the button inside the c-button
         if (toggle) {
             const button = toggle.querySelector('button') || toggle;
@@ -482,7 +489,7 @@ class TableFilter {
                 dropdown.classList.toggle('dropdown-open');
             });
         }
-        
+
         // Close on outside click
         document.addEventListener('click', (e) => {
             if (!dropdown.contains(e.target)) {
@@ -490,14 +497,14 @@ class TableFilter {
             }
         });
     }
-    
+
     initRangeFilter(range) {
         const filterId = range.dataset.filterRange;
         const format = range.dataset.format || 'number';
         const config = this.filterConfig[filterId];
-        
+
         if (!config) return;
-        
+
         const toggle = range.querySelector('[data-range-toggle]');
         const minInput = range.querySelector('[data-min-input]');
         const maxInput = range.querySelector('[data-max-input]');
@@ -898,16 +905,23 @@ class GenericFilter {
     initDropdownFilter(dropdown) {
         const filterId = dropdown.dataset.filterDropdown;
         const config = this.filterConfig[filterId];
-        
+
         if (!config) return;
-        
+
+        // Skip if already initialized (prevents duplicates on HTMX re-init)
+        if (dropdown.dataset.filterInitialized === 'true') return;
+        dropdown.dataset.filterInitialized = 'true';
+
         const toggle = dropdown.querySelector('[data-dropdown-toggle]');
         const optionsContainer = dropdown.querySelector('[data-options-container]');
         const noOptionsText = dropdown.querySelector('[data-no-options]');
         const clearSection = dropdown.querySelector('[data-clear-section]');
         const clearButton = dropdown.querySelector('[data-clear-filter]');
         const countBadge = dropdown.querySelector('[data-filter-count]');
-        
+
+        // Clear existing options before populating
+        optionsContainer.innerHTML = '';
+
         // Populate options
         if (config.options.length === 0) {
             noOptionsText.classList.remove('hidden');
@@ -922,21 +936,21 @@ class GenericFilter {
                     </label>
                 `;
                 optionsContainer.appendChild(wrapper);
-                
+
                 const checkbox = wrapper.querySelector('input[type="checkbox"]');
                 checkbox.addEventListener('change', () => {
                     this.updateDropdownFilter(filterId);
                 });
             });
         }
-        
+
         // Clear button
         if (clearButton) {
             clearButton.addEventListener('click', () => {
                 this.clearDropdownFilter(filterId);
             });
         }
-        
+
         // Toggle dropdown
         if (toggle) {
             const button = toggle.querySelector('button') || toggle;
@@ -944,7 +958,7 @@ class GenericFilter {
                 dropdown.classList.toggle('dropdown-open');
             });
         }
-        
+
         // Close on outside click
         document.addEventListener('click', (e) => {
             if (!dropdown.contains(e.target)) {
@@ -952,21 +966,21 @@ class GenericFilter {
             }
         });
     }
-    
+
     initRangeFilter(range) {
         const filterId = range.dataset.filterRange;
         const format = range.dataset.format || 'number';
         const config = this.filterConfig[filterId];
-        
+
         if (!config) return;
-        
+
         const toggle = range.querySelector('[data-range-toggle]');
         const minInput = range.querySelector('[data-min-input]');
         const maxInput = range.querySelector('[data-max-input]');
         const resetButton = range.querySelector('[data-reset-range]');
         const rangeDisplay = range.querySelector('[data-range-display]');
         const activeIndicator = range.querySelector('[data-active-indicator]');
-        
+
         // Initialize inputs
         minInput.min = config.min;
         minInput.max = config.max;
@@ -1560,6 +1574,7 @@ class ComboboxAutocomplete {
         this.input = container.querySelector('input[type="text"]');
         this.optionsList = container.querySelector('[data-options-list]');
         this.hiddenInput = container.querySelector('[data-hidden-input]');
+        this.dropdownArea = container.querySelector('[data-dropdown-area]');
         this.allOptions = Array.from(this.optionsList.querySelectorAll('li'));
         
         this.selectedIndex = -1;
@@ -1643,14 +1658,14 @@ class ComboboxAutocomplete {
             }
         });
         
-        // Close dropdown when clicking outside
+        // Close dropdown when clicking outside (only check dropdown area, not entire container with label)
         document.addEventListener('click', (e) => {
-            if (!this.container.contains(e.target)) {
+            if (!this.dropdownArea.contains(e.target)) {
                 this.closeDropdown();
             }
         });
     }
-    
+
     filterOptions(query) {
         if (query === '') {
             this.showAllOptions();
@@ -1749,12 +1764,460 @@ function initializeComboboxAutocomplete() {
     });
 }
 
+// Combobox Multi-Select Component
+class ComboboxMultiSelect {
+    constructor(container) {
+        this.container = container;
+        this.name = container.dataset.name;
+        this.max = parseInt(container.dataset.max) || Infinity;
+
+        // DOM elements
+        this.toggle = container.querySelector('[data-multi-toggle]');
+        this.chevron = container.querySelector('[data-chevron]');
+        this.placeholder = container.querySelector('[data-placeholder]');
+        this.optionsList = container.querySelector('[data-options-list]');
+        this.badgesContainer = container.querySelector('[data-badges-container]');
+        this.hiddenInputsContainer = container.querySelector('[data-hidden-inputs]');
+        this.dropdownArea = container.querySelector('[data-dropdown-area]');
+
+        // For autocomplete version
+        this.input = container.querySelector('[data-multi-input]');
+        this.isAutocomplete = !!this.input;
+
+        // State
+        this.selectedValues = new Map(); // value -> text
+        this.allOptions = [];
+        this.isOpen = false;
+        this.selectedIndex = -1;
+
+        // Badge styling from data attributes
+        this.badgeVariant = container.dataset.badgeVariant || 'neutral';
+        this.badgeSize = container.dataset.badgeSize || 'sm';
+
+        this.init();
+    }
+
+    init() {
+        // Store all options data
+        this.allOptions = Array.from(this.optionsList.querySelectorAll('li[data-value]')).map(option => ({
+            element: option,
+            value: option.dataset.value,
+            text: option.dataset.text,
+            textLower: option.dataset.text.toLowerCase()
+        }));
+
+        // Initialize selected values from existing hidden inputs (skip empty values)
+        const existingInputs = this.hiddenInputsContainer.querySelectorAll('input[type="hidden"]');
+        existingInputs.forEach(input => {
+            if (input.value && input.value.trim() !== '') {
+                const option = this.allOptions.find(opt => opt.value === input.value);
+                if (option) {
+                    this.selectedValues.set(option.value, option.text);
+                }
+            }
+        });
+
+        this.bindEvents();
+        this.updateBadges();
+        this.updateOptionsState();
+        this.updatePlaceholder();
+
+        // Clear any pre-filled value in autocomplete input (value attr might leak from template)
+        if (this.input) {
+            this.input.value = '';
+        }
+    }
+
+    bindEvents() {
+        // Toggle dropdown
+        const triggerElement = this.isAutocomplete ? this.input : this.toggle;
+
+        if (this.toggle) {
+            this.toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.toggleDropdown();
+            });
+        }
+
+        if (this.input) {
+            this.input.addEventListener('focus', () => {
+                this.openDropdown();
+                this.showAllOptions();
+            });
+
+            this.input.addEventListener('input', () => {
+                this.filterOptions(this.input.value.toLowerCase());
+                this.selectedIndex = -1;
+                this.updateSelectedOption();
+            });
+        }
+
+        // Keyboard navigation
+        const keyboardTarget = this.input || this.toggle;
+        if (keyboardTarget) {
+            keyboardTarget.addEventListener('keydown', (e) => this.handleKeydown(e));
+        }
+
+        // Option clicks (event delegation)
+        this.optionsList.addEventListener('click', (e) => {
+            const option = e.target.closest('li[data-value]');
+            if (option) {
+                this.toggleSelection(option.dataset.value, option.dataset.text);
+            }
+        });
+
+        // Badge removal (event delegation)
+        this.badgesContainer.addEventListener('click', (e) => {
+            const removeBtn = e.target.closest('[data-remove-badge]');
+            if (removeBtn) {
+                const badge = removeBtn.closest('[data-badge-value]');
+                if (badge) {
+                    this.removeSelection(badge.dataset.badgeValue);
+                }
+            }
+        });
+
+        // Close on outside click (only check dropdown area, not entire container with label)
+        document.addEventListener('click', (e) => {
+            if (!this.dropdownArea.contains(e.target)) {
+                this.closeDropdown();
+            }
+        });
+    }
+
+    handleKeydown(e) {
+        const visibleOptions = this.optionsList.querySelectorAll('li[data-value]:not(.hidden)');
+
+        switch(e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                if (!this.isOpen) {
+                    this.openDropdown();
+                } else {
+                    this.selectedIndex = Math.min(this.selectedIndex + 1, visibleOptions.length - 1);
+                    this.updateSelectedOption();
+                    this.scrollToSelected();
+                }
+                break;
+
+            case 'ArrowUp':
+                e.preventDefault();
+                this.selectedIndex = Math.max(this.selectedIndex - 1, -1);
+                this.updateSelectedOption();
+                this.scrollToSelected();
+                break;
+
+            case 'Enter':
+                e.preventDefault();
+                if (this.selectedIndex >= 0 && visibleOptions[this.selectedIndex]) {
+                    // Select the highlighted option
+                    const option = visibleOptions[this.selectedIndex];
+                    this.toggleSelection(option.dataset.value, option.dataset.text);
+                } else if (visibleOptions.length === 1) {
+                    // Auto-select if only one option visible
+                    const option = visibleOptions[0];
+                    this.toggleSelection(option.dataset.value, option.dataset.text);
+                }
+                break;
+
+            case 'Escape':
+                this.closeDropdown();
+                break;
+
+            case 'Backspace':
+                // Remove last badge if input is empty (autocomplete only)
+                if (this.isAutocomplete && this.input.value === '' && this.selectedValues.size > 0) {
+                    const lastValue = Array.from(this.selectedValues.keys()).pop();
+                    if (lastValue) {
+                        this.removeSelection(lastValue);
+                    }
+                }
+                break;
+        }
+    }
+
+    toggleSelection(value, text) {
+        if (this.selectedValues.has(value)) {
+            this.removeSelection(value);
+        } else {
+            this.addSelection(value, text);
+        }
+    }
+
+    addSelection(value, text) {
+        // Check max limit
+        if (this.selectedValues.size >= this.max) {
+            return;
+        }
+
+        this.selectedValues.set(value, text);
+        this.updateBadges();
+        this.updateHiddenInputs();
+        this.updateOptionsState();
+        this.updatePlaceholder();
+
+        // Clear autocomplete input
+        if (this.input) {
+            this.input.value = '';
+            this.showAllOptions();
+        }
+
+        // Emit change event
+        this.emitChange();
+    }
+
+    removeSelection(value) {
+        this.selectedValues.delete(value);
+        this.updateBadges();
+        this.updateHiddenInputs();
+        this.updateOptionsState();
+        this.updatePlaceholder();
+
+        // Emit change event
+        this.emitChange();
+    }
+
+    updateBadges() {
+        // Clear existing badges
+        this.badgesContainer.innerHTML = '';
+
+        // Create badges for each selected value
+        this.selectedValues.forEach((text, value) => {
+            const badge = document.createElement('span');
+            badge.className = `badge badge-${this.badgeVariant} ${this.badgeSize !== 'md' ? 'badge-' + this.badgeSize : ''} gap-1`;
+            badge.dataset.badgeValue = value;
+
+            const iconSize = this.getIconSize();
+            badge.innerHTML = `
+                ${text}
+                <button type="button" class="hover:text-error cursor-pointer" data-remove-badge>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="${iconSize}"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            `;
+
+            this.badgesContainer.appendChild(badge);
+        });
+    }
+
+    getIconSize() {
+        switch(this.badgeSize) {
+            case 'xs': return 'size-2.5';
+            case 'sm': return 'size-3';
+            case 'lg': return 'size-4';
+            default: return 'size-3.5';
+        }
+    }
+
+    updateHiddenInputs() {
+        // Clear existing inputs
+        this.hiddenInputsContainer.innerHTML = '';
+
+        // Create hidden input for each selected value (skip empty values)
+        this.selectedValues.forEach((text, value) => {
+            if (value && value.trim() !== '') {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = this.name;
+                input.value = value;
+                this.hiddenInputsContainer.appendChild(input);
+            }
+        });
+    }
+
+    updateOptionsState() {
+        this.allOptions.forEach(option => {
+            const checkIcon = option.element.querySelector('[data-check-icon]');
+            if (this.selectedValues.has(option.value)) {
+                option.element.classList.add('bg-base-200');
+                if (checkIcon) {
+                    checkIcon.classList.remove('opacity-0');
+                    checkIcon.classList.add('opacity-100');
+                }
+            } else {
+                option.element.classList.remove('bg-base-200');
+                if (checkIcon) {
+                    checkIcon.classList.add('opacity-0');
+                    checkIcon.classList.remove('opacity-100');
+                }
+            }
+        });
+    }
+
+    updatePlaceholder() {
+        // For non-autocomplete version (has a placeholder span)
+        if (this.placeholder) {
+            if (this.selectedValues.size > 0) {
+                this.placeholder.textContent = `${this.selectedValues.size} selected`;
+                this.placeholder.classList.remove('text-base-content/50');
+                this.placeholder.classList.add('text-base-content');
+            } else {
+                this.placeholder.textContent = this.container.dataset.placeholder || 'Select options...';
+                this.placeholder.classList.add('text-base-content/50');
+                this.placeholder.classList.remove('text-base-content');
+            }
+        }
+
+        // For autocomplete version (update input placeholder attribute)
+        if (this.input) {
+            const defaultPlaceholder = this.container.dataset.placeholder || 'Type to search...';
+            if (this.selectedValues.size > 0) {
+                this.input.placeholder = `${this.selectedValues.size} selected - ${defaultPlaceholder}`;
+            } else {
+                this.input.placeholder = defaultPlaceholder;
+            }
+        }
+    }
+
+    updateSelectedOption() {
+        const visibleOptions = this.optionsList.querySelectorAll('li[data-value]:not(.hidden)');
+
+        // Remove highlight from all options
+        this.allOptions.forEach(option => {
+            option.element.classList.remove('bg-primary', 'text-primary-content');
+        });
+
+        // Add highlight to selected option
+        if (this.selectedIndex >= 0 && this.selectedIndex < visibleOptions.length) {
+            const selected = visibleOptions[this.selectedIndex];
+            selected.classList.add('bg-primary', 'text-primary-content');
+        }
+    }
+
+    scrollToSelected() {
+        const visibleOptions = this.optionsList.querySelectorAll('li[data-value]:not(.hidden)');
+        if (this.selectedIndex >= 0 && this.selectedIndex < visibleOptions.length) {
+            visibleOptions[this.selectedIndex].scrollIntoView({ block: 'nearest' });
+        }
+    }
+
+    filterOptions(query) {
+        if (!query) {
+            this.showAllOptions();
+            return;
+        }
+
+        let hasVisible = false;
+        this.allOptions.forEach(option => {
+            if (option.textLower.includes(query)) {
+                option.element.classList.remove('hidden');
+                hasVisible = true;
+            } else {
+                option.element.classList.add('hidden');
+            }
+        });
+
+        // Show/hide no results message
+        let noResults = this.optionsList.querySelector('.no-results');
+        if (!hasVisible) {
+            if (!noResults) {
+                noResults = document.createElement('li');
+                noResults.className = 'px-3 py-2 text-base-content/50 no-results';
+                noResults.textContent = 'No results found';
+                this.optionsList.appendChild(noResults);
+            }
+        } else if (noResults) {
+            noResults.remove();
+        }
+    }
+
+    showAllOptions() {
+        this.allOptions.forEach(option => {
+            option.element.classList.remove('hidden');
+        });
+
+        const noResults = this.optionsList.querySelector('.no-results');
+        if (noResults) {
+            noResults.remove();
+        }
+    }
+
+    toggleDropdown() {
+        if (this.isOpen) {
+            this.closeDropdown();
+        } else {
+            this.openDropdown();
+        }
+    }
+
+    openDropdown() {
+        this.optionsList.classList.remove('hidden');
+        this.isOpen = true;
+        if (this.toggle) {
+            this.toggle.setAttribute('aria-expanded', 'true');
+        }
+        if (this.chevron) {
+            this.chevron.classList.add('rotate-180');
+        }
+    }
+
+    closeDropdown() {
+        this.optionsList.classList.add('hidden');
+        this.isOpen = false;
+        this.selectedIndex = -1;
+        this.updateSelectedOption();
+        if (this.toggle) {
+            this.toggle.setAttribute('aria-expanded', 'false');
+        }
+        if (this.chevron) {
+            this.chevron.classList.remove('rotate-180');
+        }
+    }
+
+    emitChange() {
+        const event = new CustomEvent('combobox-multi-change', {
+            detail: {
+                values: Array.from(this.selectedValues.keys()),
+                items: Array.from(this.selectedValues.entries()).map(([value, text]) => ({ value, text }))
+            }
+        });
+        this.container.dispatchEvent(event);
+    }
+
+    // Public API
+    getValues() {
+        return Array.from(this.selectedValues.keys());
+    }
+
+    setValues(values) {
+        this.selectedValues.clear();
+        values.forEach(value => {
+            const option = this.allOptions.find(opt => opt.value === value);
+            if (option) {
+                this.selectedValues.set(option.value, option.text);
+            }
+        });
+        this.updateBadges();
+        this.updateHiddenInputs();
+        this.updateOptionsState();
+        this.updatePlaceholder();
+    }
+
+    clear() {
+        this.selectedValues.clear();
+        this.updateBadges();
+        this.updateHiddenInputs();
+        this.updateOptionsState();
+        this.updatePlaceholder();
+        this.emitChange();
+    }
+}
+
+function initializeComboboxMultiSelect() {
+    const comboboxes = document.querySelectorAll('[data-combobox-multi]');
+    comboboxes.forEach(combobox => {
+        // Skip if already initialized
+        if (combobox.comboboxMultiInstance) return;
+        combobox.comboboxMultiInstance = new ComboboxMultiSelect(combobox);
+    });
+}
+
 // Initialize all components
 function initializeComponents() {
     initializeFilters();
     initializeTabs();
     initializeRangeSliders();
     initializeComboboxAutocomplete();
+    initializeComboboxMultiSelect();
 }
 
 document.addEventListener('DOMContentLoaded', initializeComponents);

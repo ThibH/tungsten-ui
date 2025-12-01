@@ -4,7 +4,7 @@ Usage: <c-combobox-autocomplete :options="[('value1', 'Label 1'), ('value2', 'La
        <c-combobox-autocomplete :options=options label="Choose an option" />
 {% endcomment %}
 
-<c-vars size="md" :disabled=False />
+<c-vars size="md" value="" :disabled=False />
 
 <div class="form-control" data-combobox-autocomplete>
     {% if label %}
@@ -13,12 +13,13 @@ Usage: <c-combobox-autocomplete :options="[('value1', 'Label 1'), ('value2', 'La
         </label>
     {% endif %}
     
-    <div class="relative">
-        <input type="text" 
+    <div class="relative" data-dropdown-area>
+        <input type="text"
                class="input input-bordered w-full {% if size != 'md' %}input-{{ size }}{% endif %} {% if disabled %}input-disabled{% endif %} {{ class }}"
                placeholder="{{ placeholder|default:'Type to search...' }}"
                {% if disabled %}disabled{% endif %}
                autocomplete="off"
+               {% for option in options %}{% if option.0 == value %}value="{{ option.1 }}"{% endif %}{% endfor %}
                {{ attrs }} />
         
         <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
@@ -37,5 +38,5 @@ Usage: <c-combobox-autocomplete :options="[('value1', 'Label 1'), ('value2', 'La
         </ul>
     </div>
     
-    <input type="hidden" name="{{ name }}" data-hidden-input />
+    <input type="hidden" name="{{ name }}" value="{{ value }}" data-hidden-input />
 </div>
