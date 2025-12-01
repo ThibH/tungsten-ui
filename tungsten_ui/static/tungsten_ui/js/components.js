@@ -1576,11 +1576,15 @@ class ComboboxAutocomplete {
         this.hiddenInput = container.querySelector('[data-hidden-input]');
         this.dropdownArea = container.querySelector('[data-dropdown-area]');
         this.allOptions = Array.from(this.optionsList.querySelectorAll('li'));
-        
+
         this.selectedIndex = -1;
         this.isOpen = false;
         this.originalOptions = [];
-        
+
+        // Portal state - move dropdown to body to escape modal overflow
+        this.isPortaled = false;
+        this.originalParent = this.optionsList.parentElement;
+
         this.init();
     }
     
@@ -1658,9 +1662,9 @@ class ComboboxAutocomplete {
             }
         });
         
-        // Close dropdown when clicking outside (only check dropdown area, not entire container with label)
+        // Close dropdown when clicking outside (check dropdown area and the portaled options list)
         document.addEventListener('click', (e) => {
-            if (!this.dropdownArea.contains(e.target)) {
+            if (!this.dropdownArea.contains(e.target) && !this.optionsList.contains(e.target)) {
                 this.closeDropdown();
             }
         });
@@ -1745,15 +1749,85 @@ class ComboboxAutocomplete {
     }
     
     openDropdown() {
+        // Portal the dropdown to body to escape modal overflow constraints
+        this.portalDropdown();
+
         this.optionsList.classList.remove('hidden');
         this.isOpen = true;
     }
-    
+
     closeDropdown() {
         this.optionsList.classList.add('hidden');
         this.isOpen = false;
         this.selectedIndex = -1;
         this.updateSelectedOption();
+
+        // Return the dropdown to its original parent
+        this.unportalDropdown();
+    }
+
+    portalDropdown() {
+        if (this.isPortaled) return;
+
+        // Calculate position relative to viewport
+        const rect = this.input.getBoundingClientRect();
+
+        // Check if we're inside a dialog (modal) - dialogs use the browser's top layer
+        const dialog = this.container.closest('dialog');
+        if (dialog) {
+            // If inside a dialog, append to the dialog element itself (not modal-box)
+            // and use absolute positioning relative to viewport
+            dialog.appendChild(this.optionsList);
+        } else {
+            // Otherwise append to body
+            document.body.appendChild(this.optionsList);
+        }
+        this.isPortaled = true;
+        this.portalTarget = dialog || document.body;
+
+        // Apply fixed positioning
+        this.optionsList.style.position = 'fixed';
+        this.optionsList.style.top = `${rect.bottom + 4}px`; // 4px gap (mt-1 equivalent)
+        this.optionsList.style.left = `${rect.left}px`;
+        this.optionsList.style.width = `${rect.width}px`;
+        this.optionsList.style.zIndex = '99999';
+
+        // Store reference for repositioning on scroll/resize
+        this.updatePositionBound = this.updateDropdownPosition.bind(this);
+        window.addEventListener('scroll', this.updatePositionBound, true);
+        window.addEventListener('resize', this.updatePositionBound);
+    }
+
+    unportalDropdown() {
+        if (!this.isPortaled) return;
+
+        // Remove event listeners
+        if (this.updatePositionBound) {
+            window.removeEventListener('scroll', this.updatePositionBound, true);
+            window.removeEventListener('resize', this.updatePositionBound);
+        }
+
+        // Return to original parent
+        this.originalParent.appendChild(this.optionsList);
+        this.isPortaled = false;
+        this.portalTarget = null;
+
+        // Reset styles
+        this.optionsList.style.position = '';
+        this.optionsList.style.top = '';
+        this.optionsList.style.left = '';
+        this.optionsList.style.width = '';
+        this.optionsList.style.zIndex = '';
+    }
+
+    updateDropdownPosition() {
+        if (!this.isPortaled || !this.isOpen) return;
+
+        const rect = this.input.getBoundingClientRect();
+
+        this.optionsList.style.top = `${rect.bottom + 4}px`;
+        this.optionsList.style.left = `${rect.left}px`;
+        this.optionsList.style.width = `${rect.width}px`;
     }
 }
 
@@ -1793,6 +1867,10 @@ class ComboboxMultiSelect {
         // Badge styling from data attributes
         this.badgeVariant = container.dataset.badgeVariant || 'neutral';
         this.badgeSize = container.dataset.badgeSize || 'sm';
+
+        // Portal state - move dropdown to body to escape modal overflow
+        this.isPortaled = false;
+        this.originalParent = this.optionsList.parentElement;
 
         this.init();
     }
@@ -1877,9 +1955,9 @@ class ComboboxMultiSelect {
             }
         });
 
-        // Close on outside click (only check dropdown area, not entire container with label)
+        // Close on outside click (check dropdown area and the portaled options list)
         document.addEventListener('click', (e) => {
-            if (!this.dropdownArea.contains(e.target)) {
+            if (!this.dropdownArea.contains(e.target) && !this.optionsList.contains(e.target)) {
                 this.closeDropdown();
             }
         });
@@ -2140,6 +2218,9 @@ class ComboboxMultiSelect {
     }
 
     openDropdown() {
+        // Portal the dropdown to body to escape modal overflow constraints
+        this.portalDropdown();
+
         this.optionsList.classList.remove('hidden');
         this.isOpen = true;
         if (this.toggle) {
@@ -2161,6 +2242,79 @@ class ComboboxMultiSelect {
         if (this.chevron) {
             this.chevron.classList.remove('rotate-180');
         }
+
+        // Return the dropdown to its original parent
+        this.unportalDropdown();
+    }
+
+    portalDropdown() {
+        if (this.isPortaled) return;
+
+        // Get the reference element (input or toggle)
+        const referenceElement = this.input || this.toggle;
+        if (!referenceElement) return;
+
+        // Calculate position relative to viewport
+        const rect = referenceElement.getBoundingClientRect();
+
+        // Check if we're inside a dialog (modal) - dialogs use the browser's top layer
+        const dialog = this.container.closest('dialog');
+        if (dialog) {
+            // If inside a dialog, append to the dialog element itself (not modal-box)
+            dialog.appendChild(this.optionsList);
+        } else {
+            // Otherwise append to body
+            document.body.appendChild(this.optionsList);
+        }
+        this.isPortaled = true;
+        this.portalTarget = dialog || document.body;
+
+        // Apply fixed positioning
+        this.optionsList.style.position = 'fixed';
+        this.optionsList.style.top = `${rect.bottom + 4}px`; // 4px gap (mt-1 equivalent)
+        this.optionsList.style.left = `${rect.left}px`;
+        this.optionsList.style.width = `${rect.width}px`;
+        this.optionsList.style.zIndex = '99999';
+
+        // Store reference for repositioning on scroll/resize
+        this.updatePositionBound = this.updateDropdownPosition.bind(this);
+        window.addEventListener('scroll', this.updatePositionBound, true);
+        window.addEventListener('resize', this.updatePositionBound);
+    }
+
+    unportalDropdown() {
+        if (!this.isPortaled) return;
+
+        // Remove event listeners
+        if (this.updatePositionBound) {
+            window.removeEventListener('scroll', this.updatePositionBound, true);
+            window.removeEventListener('resize', this.updatePositionBound);
+        }
+
+        // Return to original parent
+        this.originalParent.appendChild(this.optionsList);
+        this.isPortaled = false;
+        this.portalTarget = null;
+
+        // Reset styles
+        this.optionsList.style.position = '';
+        this.optionsList.style.top = '';
+        this.optionsList.style.left = '';
+        this.optionsList.style.width = '';
+        this.optionsList.style.zIndex = '';
+    }
+
+    updateDropdownPosition() {
+        if (!this.isPortaled || !this.isOpen) return;
+
+        const referenceElement = this.input || this.toggle;
+        if (!referenceElement) return;
+
+        const rect = referenceElement.getBoundingClientRect();
+
+        this.optionsList.style.top = `${rect.bottom + 4}px`;
+        this.optionsList.style.left = `${rect.left}px`;
+        this.optionsList.style.width = `${rect.width}px`;
     }
 
     emitChange() {
