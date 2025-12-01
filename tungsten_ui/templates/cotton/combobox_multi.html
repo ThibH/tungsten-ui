@@ -17,11 +17,14 @@ Props:
 - badge_size: Size for badges (default: sm)
 {% endcomment %}
 
-<c-vars size="md" badge_variant="neutral" badge_size="sm" :disabled=False />
+<c-vars name size="md" badge_variant="neutral" badge_size="sm" :disabled=False />
 
 <div class="form-control"
      data-combobox-multi
      data-name="{{ name }}"
+     data-placeholder="{{ placeholder|default:'Select options...' }}"
+     data-badge-variant="{{ badge_variant }}"
+     data-badge-size="{{ badge_size }}"
      {% if max %}data-max="{{ max }}"{% endif %}>
 
     {% if label %}
@@ -59,26 +62,13 @@ Props:
         </ul>
     </div>
 
-    <!-- Selected badges container -->
-    <div class="flex flex-wrap gap-2 mt-2 empty:mt-0" data-badges-container>
-        {% for val in value %}
-            {% for option in options %}
-                {% if option.0|stringformat:"s" == val|stringformat:"s" %}
-                    <span class="badge badge-{{ badge_variant }} {% if badge_size != 'md' %}badge-{{ badge_size }}{% endif %} gap-1" data-badge-value="{{ option.0 }}">
-                        {{ option.1 }}
-                        <button type="button" class="hover:text-error cursor-pointer" data-remove-badge>
-                            <c-icon name="x" class="{% if badge_size == 'xs' %}size-2.5{% elif badge_size == 'sm' %}size-3{% elif badge_size == 'lg' %}size-4{% else %}size-3.5{% endif %}" />
-                        </button>
-                    </span>
-                {% endif %}
-            {% endfor %}
-        {% endfor %}
-    </div>
+    <!-- Selected badges container (populated by JS) -->
+    <div class="flex flex-wrap gap-2 mt-2 empty:mt-0" data-badges-container></div>
 
-    <!-- Hidden inputs container for form submission -->
+    <!-- Hidden inputs for form submission (populated by JS) -->
     <div data-hidden-inputs>
         {% for val in value %}
-            <input type="hidden" name="{{ name }}" value="{{ val }}">
+            {% if val %}<input type="hidden" name="{{ name }}" value="{{ val }}" data-initial>{% endif %}
         {% endfor %}
     </div>
 </div>

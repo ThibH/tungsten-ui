@@ -1884,33 +1884,34 @@ class ComboboxMultiSelect {
             textLower: option.dataset.text.toLowerCase()
         }));
 
-        // Initialize selected values from existing hidden inputs (skip empty values)
+        // Initialize selected values from existing hidden inputs
         const existingInputs = this.hiddenInputsContainer.querySelectorAll('input[type="hidden"]');
         existingInputs.forEach(input => {
-            if (input.value && input.value.trim() !== '') {
-                const option = this.allOptions.find(opt => opt.value === input.value);
-                if (option) {
-                    this.selectedValues.set(option.value, option.text);
-                }
+            const option = this.allOptions.find(opt => opt.value === input.value);
+            if (option) {
+                this.selectedValues.set(option.value, option.text);
             }
         });
 
         this.bindEvents();
+
+        // Generate badges (not rendered server-side to avoid flash)
         this.updateBadges();
-        this.updateHiddenInputs();
-        this.updateOptionsState();
+
+        // Update options checkmarks only if there are selections
+        if (this.selectedValues.size > 0) {
+            this.updateOptionsState();
+        }
+
         this.updatePlaceholder();
 
-        // Clear any pre-filled value in autocomplete input (value attr might leak from template)
+        // Clear any pre-filled value in autocomplete input
         if (this.input) {
             this.input.value = '';
         }
     }
 
     bindEvents() {
-        // Toggle dropdown
-        const triggerElement = this.isAutocomplete ? this.input : this.toggle;
-
         if (this.toggle) {
             this.toggle.addEventListener('click', (e) => {
                 e.preventDefault();
