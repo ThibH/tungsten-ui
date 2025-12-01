@@ -8,9 +8,10 @@
         <title>{{ title }}</title>
 
         {% load static %}
-        {% include "init.html" %}
 
         {{ extra_head }}
+
+        {% include "init.html" %}
 
         <!-- Immediate theme restoration to prevent flash -->
         <script>
@@ -23,6 +24,7 @@
 
     <body class="{{ bg_color }} min-h-screen flex flex-col" hx-headers='{"x-csrftoken": "{{ csrf_token }}"}'>
         <c-toast-area></c-toast-area>
+        <c-confirm-modal />
 
         {{ slot }}
         

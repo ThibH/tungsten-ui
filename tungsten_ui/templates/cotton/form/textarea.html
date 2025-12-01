@@ -1,0 +1,58 @@
+<c-vars
+    field=""
+    placeholder=""
+    label=""
+    description=""
+    size="md"
+    variant="default"
+    name=""
+    value=""
+    rows="4"
+/>
+
+<!-- Textarea container with label -->
+<div class="flex flex-col gap-2 {% if field.errors or invalid == 'true' %}input-group-error{% endif %}">
+    {% if label %}
+        <label class="label" for="{{ textarea_id }}">
+            <c-text variant="strong" size="sm" class="label-text">{{ label }}</c-text>
+        </label>
+    {% endif %}
+
+    <!-- Textarea element -->
+    <textarea
+        class="textarea textarea-bordered w-full
+            {% if size == 'sm' %}textarea-sm{% elif size == 'lg' %}textarea-lg{% elif size == 'xs' %}textarea-xs{% endif %}
+            {% if variant == 'primary' %}textarea-primary{% elif variant == 'secondary' %}textarea-secondary{% elif variant == 'accent' %}textarea-accent{% elif variant == 'info' %}textarea-info{% elif variant == 'success' %}textarea-success{% elif variant == 'warning' %}textarea-warning{% elif variant == 'error' %}textarea-error{% endif %}
+            {% if disabled == 'true' %}textarea-disabled{% endif %}
+            {% if field.errors or invalid == 'true' %}textarea-error border-error{% endif %}
+            focus:outline-none focus:ring-2 focus:ring-primary/20
+            {{ class }}
+        "
+        id="{{ textarea_id }}"
+        {% if name %}name="{{ name }}"{% elif field %}name="{{ field.name }}"{% endif %}
+        {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+        {% if disabled == 'true' %}disabled{% endif %}
+        {% if readonly == 'true' %}readonly{% endif %}
+        {% if required == 'true' or field.field.required %}required{% endif %}
+        rows="{{ rows }}"
+        {{ attrs }}
+    >{% if value %}{{ value }}{% elif field %}{{ field.value|default:'' }}{% endif %}</textarea>
+
+    <!-- Description -->
+    {% if description %}
+        <div class="label">
+            <c-text variant="subtle" size="sm" class="label-text-alt">{{ description }}</c-text>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Error messages -->
+{% if field.errors %}
+    <div class="label">
+        <c-text variant="subtle" color="error" class="label-text-alt">
+            {% for error in field.errors %}
+                {{ error }}{% if not forloop.last %}<br>{% endif %}
+            {% endfor %}
+        </c-text>
+    </div>
+{% endif %}
