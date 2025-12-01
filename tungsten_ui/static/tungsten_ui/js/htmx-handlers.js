@@ -6,14 +6,6 @@
 // HTMX Configuration
 // =============================================================================
 
-// Add CSRF token automatically to HTMX requests
-document.addEventListener('htmx:configRequest', (event) => {
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
-    if (csrfToken) {
-        event.detail.headers['X-CSRFToken'] = csrfToken.value;
-    }
-});
-
 // =============================================================================
 // HTMX Trigger Event Handlers
 // =============================================================================
@@ -37,6 +29,18 @@ document.body.addEventListener('modalClose', function(event) {
             if (typeof modal.close === 'function') {
                 modal.close();
             }
+        }
+    }
+});
+
+// Handle modalOpen trigger from server
+// Usage in Django: return ModalOpen("myModal")
+document.body.addEventListener('modalOpen', function(event) {
+    const modalId = event.detail.id;
+    if (modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal && typeof modal.showModal === 'function') {
+            modal.showModal();
         }
     }
 });

@@ -1,0 +1,33 @@
+{% comment %}
+Modal de confirmation global pour l'extension tg-confirm.
+Ce modal est réutilisé pour toutes les confirmations.
+
+Usage:
+Inclure une seule fois dans le base template :
+    <c-confirm-modal />
+
+Puis utiliser sur n'importe quel élément HTMX :
+    <button
+        hx-delete="/api/item/1/"
+        tg-confirm="Voulez-vous vraiment supprimer cet élément ?"
+        tg-confirm-title="Suppression"
+        tg-confirm-variant="error"
+        tg-confirm-confirm-text="Supprimer"
+        tg-confirm-cancel-text="Annuler">
+        Supprimer
+    </button>
+{% endcomment %}
+
+<dialog id="tg-confirm-modal" class="modal">
+    <div class="modal-box">
+        <h3 id="tg-confirm-title" class="font-bold text-lg">Confirmation</h3>
+        <p id="tg-confirm-message" class="py-4"></p>
+        <div class="modal-action">
+            <button id="tg-confirm-cancel" class="btn">Annuler</button>
+            <button id="tg-confirm-ok" class="btn btn-primary">Confirmer</button>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
