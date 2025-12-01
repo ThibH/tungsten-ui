@@ -1,7 +1,19 @@
 {% comment %}
 Table rows container - Wraps table body rows
+
+Usage:
+    <c-table.rows>
+        {% for item in items %}
+            <c-table.row>...</c-table.row>
+        {% endfor %}
+    </c-table.rows>
+
+With HTMX refresh:
+    <c-table.rows hx-get="{% url 'items_list' %}" hx-trigger="refreshItems from:body">
+        {% include 'partials/items.html' %}
+    </c-table.rows>
 {% endcomment %}
 
-<tbody>
+<tbody {{ attrs }}>
     {{ slot }}
 </tbody>
