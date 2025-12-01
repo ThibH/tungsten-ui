@@ -1897,6 +1897,7 @@ class ComboboxMultiSelect {
 
         this.bindEvents();
         this.updateBadges();
+        this.updateHiddenInputs();
         this.updateOptionsState();
         this.updatePlaceholder();
 
